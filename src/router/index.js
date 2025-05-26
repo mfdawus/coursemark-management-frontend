@@ -1,16 +1,32 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const Login            = () => import('../views/LoginPanel.vue')
-const StudentDashboard = () => import('../views/StudentDashboard.vue')
-const LecturerPanel    = () => import('../views/LecturerPanel.vue')
-const AdvisorWorkspace = () => import('../views/AdvisorWorkspace.vue')
-const AdminPanel       = () => import('../views/AdminPanel.vue')
+const Login            = () => import('../roles/LoginPanel.vue')
+const StudentDashboard = () => import('../roles/student/StudentDashboard.vue')
+const LecturerDashboard    = () => import('../roles/lecturer/LecturerDashboard.vue')
+const AdvisorWorkspace = () => import('../roles/advisor/AdvisorDashboard.vue')
+const AdminPanel       = () => import('../roles/admin/AdminDashboard.vue')
 
 const routes = [
   { path: '/',         redirect: '/login' },
   { path: '/login',    component: Login },
   { path: '/student',  component: StudentDashboard },
-  { path: '/lecturer', component: LecturerPanel },
+  { path: '/lecturer', 
+    component: LecturerDashboard,
+    children: [
+      {
+        path: 'courses',
+        component: () => import('../roles/lecturer/CourseStudentManager.vue'),
+      },
+      {
+         path: 'marks',
+         component: () => import('../roles/lecturer/MarksAndFeedback.vue'),
+      },
+      {
+         path: 'progress',
+          component: () => import('../roles/lecturer/ProgressOverview.vue'),
+      }
+              ]
+  },
   { path: '/advisor',  component: AdvisorWorkspace },
   { path: '/admin',    component: AdminPanel },
 ]
