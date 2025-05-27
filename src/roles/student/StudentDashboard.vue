@@ -15,9 +15,6 @@
         <div class="collapse navbar-collapse" id="studentNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <router-link class="nav-link" to="/student">Dashboard</router-link>
-            </li>
-            <li class="nav-item">
               <router-link class="nav-link" to="/student/compare">Class Ranking</router-link>
             </li>
             <li class="nav-item">
@@ -31,14 +28,16 @@
 
     <!-- Page content -->
     <div class="container py-5">
-      <div><!-- Student Dashboard stub --></div>
+      <router-view /> <!-- 👈 This is the missing piece to show child pages -->
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
+
 function logout() {
   localStorage.clear()
   router.push('/login')

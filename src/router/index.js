@@ -9,7 +9,13 @@ const AdminPanel       = () => import('../roles/admin/AdminDashboard.vue')
 const routes = [
   { path: '/',         redirect: '/login' },
   { path: '/login',    component: Login },
-  { path: '/student',  component: StudentDashboard },
+  { path: '/student',  
+    component: StudentDashboard,
+    children: [
+    { path: 'compare', component: () => import('../roles/student/StudentClassRanking.vue') },
+    { path: 'simulator', component: () => import('../roles/student/StudentSimulator.vue') }
+  ]
+      },
   { path: '/lecturer', 
     component: LecturerDashboard,
     children: [
