@@ -20,7 +20,7 @@
 import { ref } from 'vue'
 
 const rankings = ref([
-  { name: 'Aisyah', total: 92 },
+  { name: 'Dawus', total: 92 },
   { name: 'You', total: 85 },
   { name: 'Hakim', total: 78 }
 ])
