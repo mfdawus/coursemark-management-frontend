@@ -30,6 +30,10 @@ const routes = [
       {
          path: 'progress',
           component: () => import('../roles/lecturer/ProgressOverview.vue'),
+      },
+      {
+         path: 'analytics',
+          component: () => import('../roles/lecturer/LecturerProgress.vue'),
       }
               ]
   },

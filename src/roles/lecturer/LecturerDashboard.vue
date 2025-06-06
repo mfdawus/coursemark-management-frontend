@@ -1,32 +1,33 @@
 <template>
-  <div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Lecturer Dashboard</a>
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <router-link class="nav-link" to="/lecturer/courses">Course & Students</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/lecturer/marks">Marks & Feedback</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/lecturer/progress">Progress Overview</router-link>
-            </li>
-          </ul>
-          <button class="btn btn-outline-danger" @click="logout">Logout</button>
-        </div>
-      </div>
-    </nav>
+  <div class="d-flex" style="min-height: 100vh;">
+    <!-- Sidebar -->
+    <div class="bg-primary text-white p-3" style="width: 250px;">
+      <h4 class="mb-4">Lecturer Dashboard</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item mb-2">
+          <router-link class="nav-link text-white" to="/lecturer/courses">📘 Course & Students</router-link>
+        </li>
+        <li class="nav-item mb-2">
+          <router-link class="nav-link text-white" to="/lecturer/marks">📝 Marks & Feedback</router-link>
+        </li>
+        <li class="nav-item mb-2">
+          <router-link class="nav-link text-white" to="/lecturer/progress">📊 Progress Overview</router-link>
+        </li>
+        <li class="nav-item mb-2">
+          <router-link class="nav-link text-white" to="/lecturer/analytics">📈 Visual Analytics</router-link>
+        </li>
+        <button class="btn btn-outline-light w-100" @click="logout">Logout</button>
+      </ul>
+    </div>
 
-    <!-- Where pages are loaded -->
-    <router-view />
+    <!-- Page Content -->
+    <div class="flex-grow-1 p-4">
+      <router-view />
+    </div>
   </div>
 </template>
 
 <script>
-
 export default {
   name: "LecturerDashboard",
   methods: {
@@ -36,5 +37,11 @@ export default {
     }
   }
 };
-
 </script>
+
+<style scoped>
+.router-link-active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+</style>
