@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const Login            = () => import('../roles/LoginPanel.vue')
 const StudentDashboard = () => import('../roles/student/StudentDashboard.vue')
 const LecturerDashboard    = () => import('../roles/lecturer/LecturerDashboard.vue')
-const AdvisorWorkspace = () => import('../roles/advisor/AdvisorDashboard.vue')
+const AdvisorDashboard = () => import('../roles/advisor/AdvisorDashboard.vue')
 const AdminPanel       = () => import('../roles/admin/AdminDashboard.vue')
 
 const routes = [
@@ -37,7 +37,19 @@ const routes = [
       }
               ]
   },
-  { path: '/advisor',  component: AdvisorWorkspace },
+  { path: '/advisor',  
+    component: AdvisorDashboard,
+    children:[
+      {
+        path: 'adviseelist',
+        component: () => import('../roles/advisor/AdviseeList.vue'),
+      },
+      {
+        path: 'adviseereport',
+        component: () => import('../roles/advisor/AdviseeReport.vue'),
+      }
+    ]
+   },
   { path: '/admin',    component: AdminPanel },
 ]
 
