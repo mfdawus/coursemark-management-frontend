@@ -50,9 +50,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-function logout() {
-  localStorage.clear()
-  router.push('/login')
+async function logout() {
+  localStorage.clear();
+  await fetch('/api/logout', { method: 'POST' }); // optional: clears PHP session
+  router.push('/login');
 }
 
 const courses = [

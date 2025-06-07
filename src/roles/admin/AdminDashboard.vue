@@ -4,12 +4,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Admin</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#adminNav"
-        >
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="adminNav">
@@ -39,8 +34,9 @@
 <script setup>
 import { useRouter } from 'vue-router'
 const router = useRouter()
-function logout() {
-  localStorage.clear()
-  router.push('/login')
+async function logout() {
+  localStorage.clear();
+  await fetch('/api/logout', { method: 'POST' }); // optional: clears PHP session
+  router.push('/login');
 }
 </script>

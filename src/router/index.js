@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const Login = () => import('../roles/LoginPanel.vue')
+const StudentLogin = () => import('../roles/StudentLogin.vue')
+const StaffLogin = () => import('../roles/StaffLogin.vue')
 const StudentDashboard = () => import('../roles/student/StudentDashboard.vue')
 const LecturerDashboard = () => import('../roles/lecturer/LecturerDashboard.vue')
 const AdvisorDashboard = () => import('../roles/advisor/AdvisorMainPage.vue')
@@ -8,7 +9,8 @@ const AdminPanel = () => import('../roles/admin/AdminDashboard.vue')
 
 const routes = [
   { path: '/', redirect: '/login' },
-  { path: '/login', component: Login },
+  { path: '/login', component: StudentLogin },
+  { path: '/login/staff', component: StaffLogin },
   {
     path: '/student',
     component: StudentDashboard,

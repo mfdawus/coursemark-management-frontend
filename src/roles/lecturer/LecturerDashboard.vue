@@ -31,10 +31,12 @@
 export default {
   name: "LecturerDashboard",
   methods: {
-    logout() {
+    async logout() {
       localStorage.clear();
+      await fetch('/api/logout', { method: 'POST' }); // optional but good for session cleanup
       this.$router.push('/login');
     }
+
   }
 };
 </script>
