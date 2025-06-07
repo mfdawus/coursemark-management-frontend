@@ -1,7 +1,9 @@
 <template>
   <div>
-    <h2>📊 Student Progress Overview</h2>
-    <Bar v-if="chartData" :data="chartData" :options="chartOptions" />
+    <h2> Total Registered Students</h2>
+    <div style="max-width: 800px; height: 400px;">
+      <Bar v-if="chartData" :data="chartData" :options="chartOptions" />
+    </div>
   </div>
 </template>
 
@@ -29,30 +31,56 @@ export default {
         responsive: true,
         plugins: {
           legend: {
-            position: 'top',
+            display: false
           },
           title: {
             display: true,
-            text: 'Average Marks per Student'
+            text: 'List of Registered Students'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              precision: 0 // Force integer scale
+            }
           }
         }
       }
     }
   },
-  mounted() {
-    // Fake data for demonstration
-    const labels = ['Ali', 'Siti', 'John', 'Aisyah', 'Ravi']
-    const scores = [75, 88, 67, 90, 82]
+  async mounted() {
+    try {
+      const response = await fetch('/api/lecturer/analytics', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
 
-    this.chartData = {
-      labels,
-      datasets: [
-        {
-          label: 'Total Marks (%)',
-          data: scores,
-          backgroundColor: '#4e73df'
-        }
-      ]
+      const result = await response.json();
+
+      if (!result.success) {
+        console.error(result.message);
+        return;
+      }
+
+      const labels = result.students.map(student => student.name);
+      const values = result.students.map(() => 1); // 1 bar per student
+
+      this.chartData = {
+        labels,
+        datasets: [
+          {
+            label: 'Registered Students',
+            data: values,
+            backgroundColor: '#4e73df'
+          }
+        ]
+      };
+    } catch (error) {
+      console.error('Fetch error:', error);
     }
   }
 }
