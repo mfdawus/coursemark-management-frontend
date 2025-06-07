@@ -1,81 +1,67 @@
 <template>
-  <div class="d-flex" style="min-height: 100vh;">
-    <!-- Sidebar -->
-    <div class="bg-primary text-white p-3" style="width: 250px;">
-      <h4 class="mb-4">Advisor Dashboard</h4>
-      <ul class="nav flex-column">
-        <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/advisor/adviseelist">Advisee List</router-link>
-        </li>
-        <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/advisor/adviseereport">Advisee Report</router-link>
-        </li>
-        <button class="btn btn-outline-light w-100" @click="logout">Logout</button>
-      </ul>
-    </div>
+  <div class="main-content">
+    <header class="dashboard-header">
+      <h1>Welcome Back, Advisor!</h1>
+      <input type="text" placeholder="Search student or course..." />
+    </header>
 
+    <section class="course-banner">
+      <h2>Guide Your Students to Academic Success</h2>
+      <button>View Student List</button>
+    </section>
 
-      <!-- Main Content -->
-      <div class="flex-grow-1 p-4">
-        <router-view />
+    <section class="continue-watching">
+      <h3>Monitored Courses</h3>
+      <div class="courses">
+        <div class="course-card" v-for="course in courses" :key="course.id">
+          <img :src="course.thumbnail" alt="Course thumbnail" />
+          <h4>{{ course.title }}</h4>
+          <p>{{ course.instructor }}</p>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <section class="mentor-section">
+      <h3>Students You Advise</h3>
+      <ul>
+        <li v-for="mentor in mentors" :key="mentor.id">
+          {{ mentor.name }} - {{ mentor.course }}
+        </li>
+      </ul>
+    </section>
+  </div>
 </template>
 
-<script>
-// import { ref } from 'vue'
-// import { useRouter } from 'vue-router'
+<script setup>
+import { ref } from "vue";
 
-// const currentView = ref('dashboard')
-// const totalStudents = 30
-// const atRiskStudents = 5
-
-export default {
-  name: "AdvisorDashboard",
-  methods: {
-    logout() {
-      localStorage.clear();
-      this.$router.push('/login');
-    }
+const courses = ref([
+  {
+    id: 1,
+    title: "Data Structures",
+    instructor: "Prof. Amir",
+    thumbnail: "https://via.placeholder.com/200x100"
+  },
+  {
+    id: 2,
+    title: "Database Systems",
+    instructor: "Dr. Nurul",
+    thumbnail: "https://via.placeholder.com/200x100"
   }
-};
+]);
+
+const mentors = ref([
+  { id: 1, name: "Aliya Binti Zainal", course: "Software Engineering" },
+  { id: 2, name: "John Lee", course: "Cybersecurity" }
+]);
 </script>
 
 <style scoped>
-/* .advisor-dashboard {
-  display: flex;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.sidebar {
-  width: 240px;
-  background-color: #fff;
-  border-right: 1px solid #eee;
-  padding: 1.5rem;
-  height: 100vh;
-}
-.sidebar h2 {
-  margin-bottom: 2rem;
-  color: #6c63ff;
-}
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.sidebar nav a {
-  text-decoration: none;
-  color: #333;
-  cursor: pointer;
-}
-
 .main-content {
   flex: 1;
   padding: 2rem;
   background-color: #f9f9f9;
-  overflow-y: auto;
 }
-
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -86,25 +72,50 @@ export default {
   padding: 0.5rem;
   width: 300px;
 }
-
-.overview-cards {
+.course-banner {
+  background-color: #6c63ff;
+  color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.course-banner button {
+  background: white;
+  color: #6c63ff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.continue-watching .courses {
   display: flex;
   gap: 1rem;
-  margin-bottom: 2rem;
 }
-.card {
-  background: #fff;
-  padding: 1rem 2rem;
+.course-card {
+  background-color: white;
+  padding: 1rem;
   border-radius: 8px;
+  width: 200px;
+  text-align: center;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
-
-.quick-links button {
-  margin-right: 1rem;
-  padding: 0.5rem 1rem;
-  background: #6c63ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-} */
+.course-card img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+.mentor-section ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+.mentor-section li {
+  background: #fff;
+  margin-bottom: 0.5rem;
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
 </style>
