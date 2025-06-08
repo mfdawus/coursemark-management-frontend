@@ -1,15 +1,23 @@
 <template>
   <div class="main-content">
+    <!-- Header -->
     <header class="dashboard-header">
       <h1>Welcome Back, Advisor!</h1>
-      <input type="text" placeholder="Search student or course..." />
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="Search student or course..."
+        class="form-control"
+      />
     </header>
 
+    <!-- Banner -->
     <section class="course-banner">
       <h2>Guide Your Students to Academic Success</h2>
-      <button>View Student List</button>
+      <button @click="scrollToMentors">View Student List</button>
     </section>
 
+    <!-- Courses -->
     <section class="continue-watching">
       <h3>Monitored Courses</h3>
       <div class="courses">
@@ -21,11 +29,27 @@
       </div>
     </section>
 
-    <section class="mentor-section">
-      <h3>Students You Advise</h3>
+    <!-- CGPA Pie Chart -->
+    <section class="cgpa-chart mt-5">
+      <h3>CGPA Distribution</h3>
+      <!-- <div style="max-width: 1800
+    ; height: 900px;">
+      <Bar v-if="chartData" :data="chartData" :options="chartOptions" />
+    </div> -->
+      <canvas id="cgpaPieChart" max-width="1800" height="900px"></canvas>
+    </section>
+
+    <!-- Advisee List -->
+    <section class="mentor-section mt-5" ref="mentorSection">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3>Students You Advise</h3>
+        <button class="btn btn-outline-secondary" @click="printMentors">
+          Print Advisee List
+        </button>
+      </div>
       <ul>
-        <li v-for="mentor in mentors" :key="mentor.id">
-          {{ mentor.name }} - {{ mentor.course }}
+        <li v-for="mentor in filteredMentors" :key="mentor.id">
+          {{ mentor.name }} - {{ mentor.course }} (CGPA: {{ mentor.cgpa }})
         </li>
       </ul>
     </section>
@@ -33,27 +57,80 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed, onMounted } from 'vue'
+import Chart from 'chart.js/auto'
 
+// Dummy Data
 const courses = ref([
   {
     id: 1,
-    title: "Data Structures",
-    instructor: "Prof. Amir",
-    thumbnail: "https://via.placeholder.com/200x100"
+    title: 'Data Structures',
+    instructor: 'Prof. Amir',
+    thumbnail: 'https://via.placeholder.com/200x100'
   },
   {
     id: 2,
-    title: "Database Systems",
-    instructor: "Dr. Nurul",
-    thumbnail: "https://via.placeholder.com/200x100"
+    title: 'Database Systems',
+    instructor: 'Dr. Nurul',
+    thumbnail: 'https://via.placeholder.com/200x100'
   }
-]);
+])
 
 const mentors = ref([
-  { id: 1, name: "Aliya Binti Zainal", course: "Software Engineering" },
-  { id: 2, name: "John Lee", course: "Cybersecurity" }
-]);
+  { id: 1, name: 'Aliya Binti Zainal', course: 'Software Engineering', cgpa: 3.7 },
+  { id: 2, name: 'John Lee', course: 'Cybersecurity', cgpa: 2.8 },
+  { id: 3, name: 'Sarah Lim', course: 'AI & Robotics', cgpa: 3.4 },
+  { id: 4, name: 'Hafiz Zulkarnain', course: 'Multimedia', cgpa: 2.4 },
+  { id: 5, name: 'Nadira Yusof', course: 'Networking', cgpa: 3.9 }
+])
+
+const searchQuery = ref('')
+const mentorSection = ref(null)
+
+const filteredMentors = computed(() =>
+  mentors.value.filter(
+    m =>
+      m.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      m.course.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+)
+
+const printMentors = () => {
+  const win = window.open('', '', 'width=600,height=800')
+  const content = filteredMentors.value
+    .map(m => `${m.name} - ${m.course} (CGPA: ${m.cgpa})`)
+    .join('<br>')
+  win.document.write(`<html><head><title>Advisee List</title></head><body>${content}</body></html>`)
+  win.document.close()
+  win.print()
+}
+
+const scrollToMentors = () => {
+  mentorSection.value?.scrollIntoView({ behavior: 'smooth' })
+}
+
+// Pie Chart Setup
+onMounted(() => {
+  const cgpaBuckets = {
+    excellent: mentors.value.filter(m => m.cgpa >= 3.5).length,
+    good: mentors.value.filter(m => m.cgpa >= 3.0 && m.cgpa < 3.5).length,
+    average: mentors.value.filter(m => m.cgpa >= 2.5 && m.cgpa < 3.0).length,
+    low: mentors.value.filter(m => m.cgpa < 2.5).length
+  }
+
+  new Chart(document.getElementById('cgpaPieChart'), {
+    type: 'pie',
+    data: {
+      labels: ['3.5 - 4.0 (Excellent)', '3.0 - 3.49 (Good)', '2.5 - 2.99 (Average)', '< 2.5 (Low)'],
+      datasets: [
+        {
+          data: [cgpaBuckets.excellent, cgpaBuckets.good, cgpaBuckets.average, cgpaBuckets.low],
+          backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#dc3545']
+        }
+      ]
+    }
+  })
+})
 </script>
 
 <style scoped>
@@ -117,5 +194,12 @@ const mentors = ref([
   padding: 1rem;
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.cgpa-chart {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 </style>
