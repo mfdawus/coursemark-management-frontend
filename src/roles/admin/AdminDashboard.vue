@@ -26,7 +26,7 @@
 
     <!-- Page content -->
     <div class="container py-5">
-      <div><!-- Admin Panel stub --></div>
+      <router-view />
     </div>
   </div>
 </template>

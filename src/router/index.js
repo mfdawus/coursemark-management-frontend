@@ -59,7 +59,24 @@ const routes = [
       }
     ]
   },
-  { path: '/admin', component: AdminPanel },
+  {
+    path: '/admin', 
+    component: AdminPanel,
+    children: [
+      {
+        path: 'users',
+        component: () => import('../roles/admin/UserList.vue'),
+      },
+      {
+        path: 'adviseelist',
+        component: () => import('../roles/advisor/AdviseeList.vue'),
+      },
+      {
+        path: 'adviseereport',
+        component: () => import('../roles/advisor/AdviseeReport.vue'),
+      }
+    ]
+  },
 ]
 
 export default createRouter({
