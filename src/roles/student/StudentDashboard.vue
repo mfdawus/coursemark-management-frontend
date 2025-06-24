@@ -1,15 +1,15 @@
 <template>
   <div class="student-dashboard">
-    <div class="sidebar">
+    <!-- <div class="sidebar">
       <h2>COURSE</h2>
-      <nav>
+       <nav>
         <router-link to="/student" exact-active-class="active">Dashboard</router-link>
         <router-link to="/student/compare">Class Ranking</router-link>
         <router-link to="/student/simulator">What‑If Simulator</router-link>
         <router-link to="/student/settings">Settings</router-link>
         <a href="#" @click.prevent="logout">Logout</a>
-      </nav>
-    </div>
+      </nav> 
+    </div> -->
 
     <div class="main-content">
       <header class="dashboard-header">
@@ -46,15 +46,15 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 
-const router = useRouter()
+// const router = useRouter()
 
-async function logout() {
-  localStorage.clear();
-  await fetch('/api/logout', { method: 'POST' }); // optional: clears PHP session
-  router.push('/login');
-}
+// async function logout() {
+//   localStorage.clear();
+//   await fetch('/api/logout', { method: 'POST' }); // optional: clears PHP session
+//   router.push('/login');
+// }
 
 const courses = [
   {

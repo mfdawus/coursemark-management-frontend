@@ -3,12 +3,7 @@
     <!-- Header -->
     <header class="dashboard-header">
       <h1>Welcome Back, Advisor!</h1>
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search student or course..."
-        class="form-control"
-      />
+      <input v-model="searchQuery" type="text" placeholder="Search student or course..." class="form-control" />
     </header>
 
     <!-- Banner -->
@@ -42,10 +37,14 @@
     <!-- Advisee List -->
     <section class="mentor-section mt-5" ref="mentorSection">
       <div class="d-flex justify-content-between align-items-center mb-2">
-        <h3>Students You Advise</h3>
+        <h3>Top 10 Students You Advise</h3>
         <button class="btn btn-outline-secondary" @click="printMentors">
           Print Advisee List
         </button>
+        <button class="btn btn-outline-secondary" @click="$router.push('/advisor/adviseereport')">
+          View All Report
+        </button>
+
       </div>
       <ul>
         <li v-for="mentor in filteredMentors" :key="mentor.id">
@@ -139,16 +138,19 @@ onMounted(() => {
   padding: 2rem;
   background-color: #f9f9f9;
 }
+
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
 }
+
 .dashboard-header input {
   padding: 0.5rem;
   width: 300px;
 }
+
 .course-banner {
   background-color: #6c63ff;
   color: white;
@@ -159,6 +161,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
+
 .course-banner button {
   background: white;
   color: #6c63ff;
@@ -167,10 +170,12 @@ onMounted(() => {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .continue-watching .courses {
   display: flex;
   gap: 1rem;
 }
+
 .course-card {
   background-color: white;
   padding: 1rem;
@@ -179,15 +184,18 @@ onMounted(() => {
   text-align: center;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
+
 .course-card img {
   width: 100%;
   border-radius: 8px;
   margin-bottom: 0.5rem;
 }
+
 .mentor-section ul {
   list-style-type: none;
   padding-left: 0;
 }
+
 .mentor-section li {
   background: #fff;
   margin-bottom: 0.5rem;
@@ -195,6 +203,7 @@ onMounted(() => {
   border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
 .cgpa-chart {
   background: #ffffff;
   padding: 1rem;
