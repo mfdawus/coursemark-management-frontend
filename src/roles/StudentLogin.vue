@@ -73,7 +73,14 @@ async function submit() {
         <input type="pin" v-model="pin" class="form-control" />
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Login</button>
+            <!-- Login Button -->
+      <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+
+      <!-- Advisee Report Button -->
+      <router-link class="btn btn-primary w-100" to="/login/staff">
+        Staff Login
+      </router-link>
+
     </form>
   </div>
 </template>
