@@ -8,7 +8,18 @@
           <router-link class="nav-link text-white" to="/lecturer/courses">📘 Course & Students</router-link>
         </li>
         <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/lecturer/marks">📝 Marks & Feedback</router-link>
+          <router-link class="nav-link text-white" to="/lecturer/assessments">📚 Assessments</router-link>
+        </li>
+        <li class="nav-item mb-2">
+          <router-link class="nav-link text-white" to="/lecturer/assignments">✅ Assign Assessments</router-link>
+        </li>
+        <li class="nav-item mb-2">
+          <router-link class="nav-link text-white" to="/lecturer/enrollments">
+            👥 Student Enrollments
+          </router-link>
+        </li>
+        <li class="nav-item mb-2">
+          <router-link class="nav-link text-white" to="/lecturer/final-exams">🎯 Final Exam Marks</router-link>
         </li>
         <li class="nav-item mb-2">
           <router-link class="nav-link text-white" to="/lecturer/progress">📊 Progress Overview</router-link>

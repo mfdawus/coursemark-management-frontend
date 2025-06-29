@@ -15,7 +15,7 @@ const routes = [
     path: '/student',
     component: StudentDashboard,
     children: [
-      { path: 'dashboard', component: () => import('../roles/student/StudentDashboard.vue')},
+      { path: 'dashboard', component: () => import('../roles/student/StudentDashboard.vue') },
       { path: 'compare', component: () => import('../roles/student/StudentClassRanking.vue') },
       { path: 'simulator', component: () => import('../roles/student/StudentSimulator.vue') }
     ]
@@ -33,15 +33,44 @@ const routes = [
         component: () => import('../roles/lecturer/MarksAndFeedback.vue'),
       },
       {
+        path: 'marks/:course_id/:student_id',
+        name: 'marks-entry',
+        component: () => import('../roles/lecturer/MarksEntryPage.vue'),
+        props: true
+      },
+      {
         path: 'progress',
         component: () => import('../roles/lecturer/ProgressOverview.vue'),
       },
       {
         path: 'analytics',
         component: () => import('../roles/lecturer/LecturerProgress.vue'),
-      }
+      },
+      {
+        path: 'enrollments',
+        component: () => import('../roles/lecturer/StudentEnrollments.vue'),
+      },
+      {
+        path: '/lecturer/assessments',
+        component: () => import('../roles/lecturer/AssessmentManager.vue')
+      },
+      {
+        path: '/lecturer/assignments',
+        component: () => import('../roles/lecturer/AssignAssessments.vue')
+      },
+      {
+        path: 'final-exams',
+        component: () => import('../roles/lecturer/FinalExamList.vue'),
+      },
+      {
+        path: 'final-exams/:course_id/:student_id',
+        component: () => import('../roles/lecturer/FinalExamEntry.vue'),
+        props: true
+      },
     ]
   },
+
+
   {
     path: '/advisor',
     component: AdvisorDashboard,
@@ -61,7 +90,7 @@ const routes = [
     ]
   },
   {
-    path: '/admin', 
+    path: '/admin',
     component: AdminPanel,
     children: [
       {
