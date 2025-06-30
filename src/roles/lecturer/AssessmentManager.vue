@@ -114,13 +114,24 @@ async function fetchAssessments() {
 }
 
 async function saveAssessment() {
+  // Calculate total weight for the selected course
+  const totalWeight = assessments.value
+    .filter(a => a.course_id === form.value.course_id && a.id !== editingId.value)
+    .reduce((sum, a) => sum + Number(a.weight), 0)
+
+  // Check if adding this assessment exceeds 70%
+  if (totalWeight + Number(form.value.weight) > 70) {
+    alert(`Total weight for this course exceeds 70%. Currently: ${totalWeight}%, adding: ${form.value.weight}%`)
+    return
+  }
+
   try {
     const method = editingId.value ? 'PUT' : 'POST'
     const url = editingId.value ? `/api/lecturer/assessments/${editingId.value}` : '/api/lecturer/assessments'
     const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form.value, created_by: 1 }) // you may replace created_by
+      body: JSON.stringify({ ...form.value, created_by: 1 })
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Failed')
@@ -130,6 +141,7 @@ async function saveAssessment() {
     alert(err.message)
   }
 }
+
 
 function editAssessment(assess) {
   editingId.value = assess.id
