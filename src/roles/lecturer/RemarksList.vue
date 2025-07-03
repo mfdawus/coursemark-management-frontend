@@ -1,55 +1,57 @@
 <template>
-  <div class="p-4 max-w-5xl mx-auto">
-    <h2 class="text-2xl font-bold mb-4">Remarks List for Course {{ courseId }}</h2>
+  <div class="p-6 max-w-6xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6">Students & Final Marks</h2>
 
-    <table v-if="loaded" class="table-auto w-full border">
-      <thead>
+    <table class="min-w-full border-collapse border">
+      <thead class="bg-gray-100">
         <tr>
-          <th class="p-2 border">Student</th>
-          <th class="p-2 border">Matric</th>
-          <th class="p-2 border">Assessment</th>
-          <th class="p-2 border">Status</th>
+          <th class="p-2 border">Student Name</th>
+          <th class="p-2 border">Matric Number</th>
+          <th class="p-2 border">Course Code</th>
+          <th class="p-2 border">Course Name</th>
+          <th class="p-2 border">Final Mark</th>
           <th class="p-2 border">Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in remarks" :key="`${row.student_id}-${row.assessment_id}`">
+        <tr v-for="row in students" :key="`${row.student_id}-${row.course_id}`">
           <td class="p-2 border">{{ row.student_name }}</td>
           <td class="p-2 border">{{ row.matric_number }}</td>
-          <td class="p-2 border">{{ row.assessment_title }}</td>
-          <td class="p-2 border">{{ row.status }}</td>
+          <td class="p-2 border">{{ row.course_code }}</td>
+          <td class="p-2 border">{{ row.course_name }}</td>
           <td class="p-2 border">
-            <button @click="goToRemark(row.student_id, row.assessment_id)"
-              class="bg-blue-600 text-white px-3 py-1 rounded">
-              ✍️ Add/Edit Remark
-            </button>
+            <span v-if="row.final_mark !== null">{{ row.final_mark }}</span>
+            <span v-else class="text-gray-400 italic">Not entered</span>
           </td>
+          <td class="p-2 border">
+  <router-link 
+    :to="`/lecturer/remarks/${row.course_id}/${row.student_id}`"
+    class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+  >
+    ✍️ Add/Edit Remark
+  </router-link>
+</td>
+
         </tr>
       </tbody>
     </table>
 
-    <div v-else class="text-center text-gray-500 mt-10">Loading...</div>
+    <div v-if="!students.length" class="mt-6 text-center text-gray-500">
+      No data found.
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 
-const route = useRoute()
-const router = useRouter()
-const courseId = route.params.course_id
-
-const remarks = ref([])
-const loaded = ref(false)
+const students = ref([])
 
 onMounted(async () => {
-  const res = await fetch(`/api/remarks/${courseId}`)
-  remarks.value = await res.json()
-  loaded.value = true
+  const res = await fetch('/api/lecturer/students-remarks')
+  const data = await res.json()
+  console.log('Loaded data:', data)
+  students.value = data
 })
 
-function goToRemark(studentId, assessmentId) {
-  router.push(`/lecturer/remarks/${studentId}/${assessmentId}`)
-}
 </script>
