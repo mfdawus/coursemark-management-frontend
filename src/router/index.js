@@ -67,6 +67,16 @@ const routes = [
         component: () => import('../roles/lecturer/FinalExamEntry.vue'),
         props: true
       },
+      {
+        path: '/lecturer/remarks/:course_id',
+        component: () => import('../roles/lecturer/RemarksList.vue'),
+        props: true
+      },
+      {
+        path: '/lecturer/remarks/:student_id/:assessment_id',
+        component: () => import('../roles/lecturer/RemarkEntry.vue'),
+        props: true
+      },
     ]
   },
 

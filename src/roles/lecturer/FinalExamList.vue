@@ -1,7 +1,14 @@
 <template>
   <div class="p-4">
     <h2 class="text-2xl font-bold mb-4">Final Exam Marks (30%)</h2>
-
+<div class="flex space-x-2 mb-4">
+  <!-- <button @click="exportPDF" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+    Export PDF
+  </button> -->
+  <button @click="exportExcel" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+    Export Excel
+  </button>
+</div>
     <table class="table-auto w-full border">
       <thead class="bg-gray-100">
         <tr>
@@ -35,6 +42,10 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
+import 'jspdf-autotable'
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+
 const students = ref([])
 const router = useRouter()
 
@@ -47,6 +58,26 @@ function goToEntry(courseId, studentId) {
   router.push({
     path: `/lecturer/final-exams/${courseId}/${studentId}`
   })
+}
+
+
+
+function exportExcel() {
+  const ws_data = [
+    ["#", "Student Name", "Matric Number", "Course", "Final Mark"],
+    ...students.value.map((item, index) => [
+      index + 1,
+      item.name,
+      item.matric_number,
+      item.course_name,
+      item.final_mark
+    ])
+  ]
+  const ws = XLSX.utils.aoa_to_sheet(ws_data)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, "Final Exams")
+  const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" })
+  saveAs(new Blob([wbout], { type: "application/octet-stream" }), "final_exam_list.xlsx")
 }
 
 onMounted(() => {
