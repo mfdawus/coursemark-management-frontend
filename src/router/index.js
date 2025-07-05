@@ -16,8 +16,16 @@ const routes = [
     component: StudentDashboard,
     children: [
       { path: 'dashboard', component: () => import('../roles/student/StudentDashboard.vue') },
-      { path: 'compare', component: () => import('../roles/student/StudentClassRanking.vue') },
-      { path: 'simulator', component: () => import('../roles/student/StudentSimulator.vue') }
+      { path: 'mymarks', component: () => import('../roles/student/MyMarks.vue') },
+      { path: 'fullbreakdown', component: () => import('../roles/student/FullBreakdown.vue') },
+      { path: 'performancetrend', component: () => import('../roles/student/PerformanceTrend.vue') },
+      { path: 'whatif', component: () => import('../roles/student/WhatIf.vue') },
+      { path: 'rankings', component: () => import('../roles/student/Rankings.vue') },
+      { path: 'feedbackremarks', component: () => import('../roles/student/FeedbackRemarks.vue') },
+      { path: 'notifications', component: () => import('../roles/student/Notifications.vue') },
+      { path: 'recheckrequests', component: () => import('../roles/student/RecheckRequest.vue') },
+      { path: 'profile', component: () => import('../roles/student/Profile.vue') },
+
     ]
   },
   {
