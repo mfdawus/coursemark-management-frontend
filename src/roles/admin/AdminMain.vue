@@ -13,10 +13,10 @@
               <router-link class="nav-link" to="/admin/users">Users</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/admin/logs">Logs</router-link>
+              <router-link class="nav-link" to="/admin/courses">Courses & Enrollments</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/admin/reset-passwords">Reset Passwords</router-link>
+              <router-link class="nav-link" to="/admin/logs">Logs</router-link>
             </li>
           </ul>
           <button class="btn btn-outline-light" @click="logout">Logout</button>

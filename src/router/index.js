@@ -5,7 +5,7 @@ const StaffLogin = () => import('../roles/StaffLogin.vue')
 const StudentDashboard = () => import('../roles/student/StudentMainPage.vue')
 const LecturerDashboard = () => import('../roles/lecturer/LecturerDashboard.vue')
 const AdvisorDashboard = () => import('../roles/advisor/AdvisorMainPage.vue')
-const AdminPanel = () => import('../roles/admin/AdminDashboard.vue')
+const AdminPanel = () => import('../roles/admin/AdminMain.vue')
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -116,12 +116,8 @@ const routes = [
         component: () => import('../roles/admin/UserList.vue'),
       },
       {
-        path: 'adviseelist',
-        component: () => import('../roles/advisor/AdviseeList.vue'),
-      },
-      {
-        path: 'adviseereport',
-        component: () => import('../roles/advisor/AdviseeReport.vue'),
+        path: 'courses',
+        component: () => import('../roles/lecturer/CourseStudentManager.vue'),
       }
     ]
   },
