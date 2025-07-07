@@ -17,7 +17,6 @@ const routes = [
     children: [
       { path: 'dashboard', component: () => import('../roles/student/StudentDashboard.vue') },
       { path: 'mymarks', component: () => import('../roles/student/MyMarks.vue') },
-      { path: 'fullbreakdown', component: () => import('../roles/student/FullBreakdown.vue') },
       { path: 'performancetrend', component: () => import('../roles/student/PerformanceTrend.vue') },
       { path: 'whatif', component: () => import('../roles/student/WhatIf.vue') },
       { path: 'rankings', component: () => import('../roles/student/Rankings.vue') },

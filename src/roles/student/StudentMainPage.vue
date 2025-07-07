@@ -10,9 +10,6 @@
           <router-link class="nav-link text-white" to="/student/mymarks">My Marks</router-link>
         </li>
         <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/student/fullbreakdown">Full Marks Breakdown</router-link>
-        </li>
-        <li class="nav-item mb-2">
           <router-link class="nav-link text-white" to="/student/performancetrend">Performance Trend</router-link>
         </li>
         <li class="nav-item mb-2">
