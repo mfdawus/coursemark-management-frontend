@@ -1,93 +1,132 @@
 <template>
-  <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Progress Overview</h2>
-      <div>
-        <button class="btn btn-primary me-2" @click="scrollToMarkBreakdown">
-          View Full Mark Breakdown
-        </button>
-        <button class="btn btn-secondary" @click="scrollToClassAverage">
-          View Class Average per Component
-        </button>
+  <div class="p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white p-4 rounded-2xl shadow">
+        <h3 class="text-xl font-semibold mb-2">Total Students</h3>
+        <p class="text-3xl font-bold">{{ totalStudents }}</p>
+      </div>
+      <div class="bg-white p-4 rounded-2xl shadow">
+        <h3 class="text-xl font-semibold mb-2">Avg Weight Completed</h3>
+        <p class="text-3xl font-bold">{{ avgWeight.toFixed(1) }}%</p>
+      </div>
+      <div class="bg-white p-4 rounded-2xl shadow">
+        <h3 class="text-xl font-semibold mb-2">Total Remarks</h3>
+        <p class="text-3xl font-bold">{{ totalRemarks }}</p>
       </div>
     </div>
 
-    <!-- Full Mark Breakdown Section -->
-    <div ref="markBreakdown" class="mt-5">
-      <h4>Full Mark Breakdown</h4>
-      <table class="table table-bordered table-striped mt-3">
-        <thead class="table-dark">
-          <tr>
-            <th>Student Name</th>
-            <th>Assignment</th>
-            <th>Quiz</th>
-            <th>Midterm</th>
-            <th>Final</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="student in students" :key="student.name">
-            <td>{{ student.name }}</td>
-            <td>{{ student.assignment }}</td>
-            <td>{{ student.quiz }}</td>
-            <td>{{ student.midterm }}</td>
-            <td>{{ student.final }}</td>
-            <td>{{ student.total }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <div class="max-w-7xl mx-auto p-6">
+  <div class="overflow-x-auto rounded-2xl shadow">
+   <table class="progress-table">
+  <thead>
+    <tr>
+      <th>Student</th>
+      <th>Matric</th>
+      <th>Course</th>
+      <th># Assessments</th>
+      <th># Marks</th>
+      <th>Total Marks</th>
+      <th>Final Exam</th>
+      <th># Remarks</th>
+      <th>Progress</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="row in progressData" :key="row.student_id + '-' + row.course_id">
+      <td>{{ row.student_name }}</td>
+      <td>{{ row.matric_number }}</td>
+      <td>{{ row.course_name }}</td>
+      <td>{{ row.assessment_count }}</td>
+      <td>{{ row.marks_count }}</td>
+      <td>{{ row.total_marks }}</td>
+      <td>{{ row.final_mark ?? '-' }}</td>
+      <td>{{ row.remark_count }}</td>
+      <td>
+        <div class="progress-bar-container">
+          <div class="progress-bar" :style="{ width: (row.total_weight_completed)+'%' }"></div>
+        </div>
+        <small>{{ row.total_weight_completed }}%</small>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-    <!-- Class Average Section -->
-    <div ref="classAverage" class="mt-5">
-      <h4>Class Average per Component</h4>
-      <table class="table table-bordered table-hover mt-3">
-        <thead class="table-secondary">
-          <tr>
-            <th>Component</th>
-            <th>Average Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="avg in averages" :key="avg.component">
-            <td>{{ avg.component }}</td>
-            <td>{{ avg.average }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+
+
+  </div>
+</div>
+
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
 
-const markBreakdown = ref(null)
-const classAverage = ref(null)
+const progressData = ref([])
 
-const scrollToMarkBreakdown = () => {
-  markBreakdown.value?.scrollIntoView({ behavior: 'smooth' })
-}
+const totalStudents = computed(() => progressData.value.length)
+const avgWeight = computed(() => {
+  if (progressData.value.length === 0) return 0
+  const total = progressData.value.reduce((sum, r) => sum + (parseFloat(r.total_weight_completed) || 0), 0)
+  return total / progressData.value.length
+})
+const totalRemarks = computed(() => {
+  return progressData.value.reduce((sum, r) => sum + (parseInt(r.remark_count) || 0), 0)
+})
 
-const scrollToClassAverage = () => {
-  classAverage.value?.scrollIntoView({ behavior: 'smooth' })
-}
-
-// Dummy student data
-const students = ref([
-  { name: 'Ali Rahman', assignment: 18, quiz: 7, midterm: 22, final: 38, total: 85 },
-  { name: 'Nur Aisyah', assignment: 20, quiz: 8, midterm: 25, final: 40, total: 93 },
-  { name: 'John Lee', assignment: 15, quiz: 6, midterm: 20, final: 35, total: 76 }
-])
-
-// Dummy averages
-const averages = ref([
-  { component: 'Assignment', average: 17.7 },
-  { component: 'Quiz', average: 7.0 },
-  { component: 'Midterm', average: 22.3 },
-  { component: 'Final', average: 37.7 },
-  { component: 'Total', average: 84.3 }
-])
+onMounted(async () => {
+  const res = await axios.get('/api/lecturer/progress')
+  progressData.value = res.data
+})
 </script>
+<style>
+.progress-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.progress-table th,
+.progress-table td {
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.progress-table th {
+  background-color: #f8f8f8;
+  font-weight: 600;
+  color: #444;
+}
+
+.progress-table tr {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.progress-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.progress-table tr:hover {
+  background-color: #e2e8f0;
+  transform: scale(1.02);
+}
+
+.progress-bar-container {
+  background-color: #e2e8f0;
+  border-radius: 8px;
+  height: 8px;
+  width: 100%;
+}
+
+.progress-bar {
+  background-color: #4299e1; /* blue bar */
+  height: 8px;
+  border-radius: 8px;
+  transition: width 0.4s ease;
+}
+</style>
 

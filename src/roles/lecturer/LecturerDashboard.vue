@@ -28,7 +28,7 @@
           <router-link class="nav-link text-white" to="/lecturer/progress">📊 Progress Overview</router-link>
         </li>
         <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/lecturer/analytics">📈 Visual Analytics</router-link>
+          <router-link class="nav-link text-white" to="/lecturer/analyticss">📈 Visual Analytics</router-link>
         </li>
         <button class="btn btn-outline-light w-100" @click="logout">Logout</button>
       </ul>
