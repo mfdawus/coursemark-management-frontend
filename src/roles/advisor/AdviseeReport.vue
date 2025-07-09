@@ -1,14 +1,10 @@
 <template>
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Progress Overview</h2>
+      <h2><span>📄</span> Progress Overview</h2>
       <div>
-        <button class="btn btn-primary me-2" @click="scrollToMarkBreakdown">
-          View Full Mark Breakdown
-        </button>
-        <button class="btn btn-secondary" @click="scrollToClassAverage">
-          View Class Average per Component
-        </button>
+        <button class="btn btn-outline-primary me-2" @click="printReport"><i class="bi bi-printer"></i> Print</button>
+        <button class="btn btn-outline-success" @click="exportCSV"><i class="bi bi-file-earmark-spreadsheet"></i> Export CSV</button>
       </div>
     </div>
 
@@ -112,7 +108,6 @@
         Please select a course to view its averages.
       </div>
     </div>
-
     <!-- Hidden printable area -->
     <div id="printArea" ref="printArea" style="display: none;"></div>
   </div>
@@ -278,13 +273,13 @@ const calculateAverages = () => {
   }
 }
 
-const scrollToMarkBreakdown = () => {
-  markBreakdown.value?.scrollIntoView({ behavior: 'smooth' })
-}
+// const scrollToMarkBreakdown = () => {
+//   markBreakdown.value?.scrollIntoView({ behavior: 'smooth' })
+// }
 
-const scrollToClassAverage = () => {
-  classAverage.value?.scrollIntoView({ behavior: 'smooth' })
-}
+// const scrollToClassAverage = () => {
+//   classAverage.value?.scrollIntoView({ behavior: 'smooth' })
+// }
 
 const getStatusLabel = (total) => {
   if (total >= 80) return 'Good Standing'

@@ -3,19 +3,29 @@
     <!-- Sidebar -->
     <div class="bg-primary text-white p-3" style="width: 250px;">
       <h4 class="mb-4">
-        <router-link class="nav-link text-white" to="/advisor/dashboard">Advisor Dashboard</router-link>
+        <router-link class="nav-link text-white" to="/advisor/dashboard">
+          <span>📊</span> Advisor Dashboard
+        </router-link>
       </h4>
       <ul class="nav flex-column">
         <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/advisor/adviseelist">Advisee List</router-link>
+          <router-link class="nav-link text-white" to="/advisor/adviseelist">
+            <span>👥</span> Advisee List
+          </router-link>
         </li>
         <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/advisor/adviseereport">Advisee Report</router-link>
+          <router-link class="nav-link text-white" to="/advisor/adviseereport">
+            <span>📄</span> Advisee Report
+          </router-link>
         </li>
         <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/advisor">Advisee Next Function</router-link>
+          <router-link class="nav-link text-white" to="/advisor">
+            <span>✨</span> Advisee Next Function
+          </router-link>
         </li>
-        <button class="btn btn-outline-light w-100" @click="logout">Logout</button>
+        <button class="btn btn-outline-light w-100" @click="logout">
+          <span>🚪</span> Logout
+        </button>
       </ul>
     </div>
 

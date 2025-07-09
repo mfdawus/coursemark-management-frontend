@@ -1,7 +1,10 @@
 <template>
   <div class="advisee-list-container">
-    <h2 class="title">Your Advisees</h2>
-
+    <h2 class="title"><span>👥</span> Your Advisees</h2>
+    <!-- Export Button -->
+    <div class="mb-3 d-flex justify-content-end">
+      <button class="btn btn-outline-success" @click="exportCSV">Export CSV</button>
+    </div>
     <!-- Search + Filters -->
     <div class="filters d-flex flex-wrap gap-3 mb-3">
       <input
@@ -37,16 +40,17 @@
           <th>Program</th>
           <th>CGPA</th>
           <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr
           v-for="(student, index) in filteredStudents"
-          :key="student.id"
+          :key="student.student_id"
         >
           <td>{{ index + 1 }}</td>
-          <td>{{ student.name }}</td>
-          <td>{{ student.studentId }}</td>
+          <td>{{ student.student_name }}</td>
+          <td>{{ student.student_id }}</td>
           <td>{{ student.program }}</td>
           <td>{{ student.cgpa }}</td>
           <td>
@@ -57,33 +61,50 @@
               {{ getStatusLabel(student.cgpa) }}
             </span>
           </td>
+          <td>
+            <button class="btn btn-sm btn-info me-2" @click="openNotes(student)">Notes</button>
+          </td>
         </tr>
       </tbody>
     </table>
+    <!-- Notes Modal -->
+    <AdviseeNotesModal
+      :visible="showNotesModal"
+      :student="selectedStudent"
+      :initialNotes="studentNotes[selectedStudent?.student_id] || []"
+      @close="showNotesModal = false"
+      @update:notes="updateNotes"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import AdviseeNotesModal from './AdviseeNotesModal.vue';
 
 const searchQuery = ref('');
 const selectedProgram = ref('');
 const selectedStatus = ref('');
 
-const students = ref([
-  { id: 1, name: 'Aliya Zainal', studentId: '20221001', program: 'Software Engineering', cgpa: 3.75 },
-  { id: 2, name: 'John Lee', studentId: '20221002', program: 'Cybersecurity', cgpa: 2.4 },
-  { id: 3, name: 'Maria Tan', studentId: '20221003', program: 'AI & Robotics', cgpa: 1.95 },
-  { id: 4, name: 'Harith Ahmad', studentId: '20221004', program: 'Data Science', cgpa: 3.2 },
-  { id: 5, name: 'Nur Iman', studentId: '20221005', program: 'Multimedia', cgpa: 2.8 },
-  { id: 6, name: 'Jason Ng', studentId: '20221006', program: 'Game Development', cgpa: 3.9 },
-  { id: 7, name: 'Fatimah Bakar', studentId: '20221007', program: 'Network Engineering', cgpa: 2.1 },
-  { id: 8, name: 'Danish Aiman', studentId: '20221008', program: 'Software Engineering', cgpa: 1.6 },
-]);
+const students = ref([]);
+const showNotesModal = ref(false);
+const selectedStudent = ref(null);
+const studentNotes = ref({}); // { [student_id]: [notes] }
+
+onMounted(async () => {
+  try {
+    const response = await fetch('/api/advisor/adviseelist');
+    if (!response.ok) throw new Error('Failed to fetch advisees');
+    students.value = await response.json();
+  } catch (err) {
+    console.error(err);
+    // Optionally show an error message
+  }
+});
 
 const uniquePrograms = computed(() => {
-  const programs = students.value.map(s => s.program);
-  return [...new Set(programs)];
+  const programs = students.value.map(s => s.program || '');
+  return [...new Set(programs)].filter(Boolean);
 });
 
 const getStatusLabel = (cgpa) => {
@@ -101,9 +122,9 @@ const getBadgeClass = (cgpa) => {
 const filteredStudents = computed(() => {
   return students.value.filter(student => {
     const matchesSearch =
-      student.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      student.studentId.includes(searchQuery.value) ||
-      student.program.toLowerCase().includes(searchQuery.value.toLowerCase());
+      (student.student_name || '').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      (student.student_id || '').includes(searchQuery.value) ||
+      (student.program || '').toLowerCase().includes(searchQuery.value.toLowerCase());
 
     const matchesProgram = selectedProgram.value === '' || student.program === selectedProgram.value;
 
@@ -114,6 +135,41 @@ const filteredStudents = computed(() => {
     return matchesSearch && matchesProgram && matchesStatus;
   });
 });
+
+function openNotes(student) {
+  selectedStudent.value = student;
+  showNotesModal.value = true;
+}
+function updateNotes(notes) {
+  if (selectedStudent.value) {
+    studentNotes.value[selectedStudent.value.student_id] = notes;
+  }
+}
+
+function exportCSV() {
+  const rows = filteredStudents.value.map(student => {
+    const notes = (studentNotes.value[student.student_id] || []).map(n => n.text).join(' | ');
+    return [
+      student.student_name,
+      student.student_id,
+      student.program,
+      student.cgpa,
+      getStatusLabel(student.cgpa),
+      notes
+    ];
+  });
+  const header = ['Student Name', 'Student ID', 'Program', 'CGPA', 'Status', 'Notes'];
+  const csvContent = [header, ...rows]
+    .map(e => e.map(x => '"' + (x ?? '') + '"').join(','))
+    .join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'advisee_report.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 </script>
 
 <style scoped>
@@ -128,5 +184,11 @@ const filteredStudents = computed(() => {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 1rem;
+}
+
+.title span {
+  margin-right: 0.5em;
+  font-size: 1.2em;
+  vertical-align: middle;
 }
 </style>
