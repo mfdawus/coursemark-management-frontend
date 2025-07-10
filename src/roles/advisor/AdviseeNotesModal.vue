@@ -11,9 +11,14 @@
           <div v-if="message" class="alert alert-success">{{ message }}</div>
           <div v-if="notes.length === 0 && !loading" class="alert alert-info">No notes yet.</div>
           <ul class="list-group mb-3">
-            <li v-for="(note, idx) in notes" :key="idx" class="list-group-item">
-              <div class="fw-bold">{{ note.meeting_date || note.created_at }}</div>
-              <div>{{ note.note }}</div>
+            <li v-for="(note, idx) in notes" :key="note.id || idx" class="list-group-item d-flex justify-content-between align-items-start">
+              <div>
+                <div class="fw-bold">{{ note.meeting_date || note.created_at }}</div>
+                <div>{{ note.note }}</div>
+              </div>
+              <button class="btn btn-sm btn-danger ms-2" @click="deleteNote(note.id)" :disabled="loading" title="Delete note">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </li>
           </ul>
           <select v-model="selectedCourseId" class="form-control mb-2">
@@ -101,7 +106,7 @@ async function saveNote() {
   error.value = '';
   loading.value = true;
   try {
-    const matric_number = props.student.matric_number;
+    const matric_number = props.student.student_id;
     const course_id = selectedCourseId.value;
     if (!course_id) {
       error.value = 'Please select a course.';
@@ -129,6 +134,32 @@ async function saveNote() {
   } catch (err) {
     error.value = 'Error occurred while adding note.';
     console.error('Error saving note:', err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function deleteNote(noteId) {
+  if (!noteId) return;
+  if (!confirm('Are you sure you want to delete this note?')) return;
+  loading.value = true;
+  error.value = '';
+  message.value = '';
+  try {
+    const res = await fetch(`/api/advisor/notes/${noteId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      message.value = 'Note deleted.';
+      await loadNotes();
+    } else {
+      error.value = data.error || 'Failed to delete note.';
+    }
+  } catch (err) {
+    error.value = 'Error deleting note.';
+    console.error('Error deleting note:', err);
   } finally {
     loading.value = false;
   }
