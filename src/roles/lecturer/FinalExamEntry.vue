@@ -12,7 +12,13 @@
       <!-- Final Mark Input -->
       <div class="mb-4">
         <label class="font-semibold">Final Mark :</label>
-        <input type="number" v-model.number="finalMark" max="30" min="0" class="border p-2 rounded w-full mt-1" />
+        <input type="number" v-model.number="finalMark" max="100" min="0" class="border p-2 rounded w-full mt-1" />
+      </div>
+
+      <!-- GPA Display -->
+      <div class="mb-4">
+        <label class="font-semibold">GPA :</label>
+        <input type="text" :value="gpaDisplay" disabled class="border p-2 rounded w-full mt-1 bg-gray-100" />
       </div>
 
       <!-- Final Weight Input -->
@@ -67,8 +73,8 @@
           🗑 Delete
         </button>
         <button @click="downloadExcel" class="bg-blue-600 text-white px-4 py-2 rounded">
-  📥 Download Excel
-</button>
+          📥 Download Excel
+        </button>
       </div>
 
       <!-- Warning -->
@@ -86,13 +92,14 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import * as XLSX from 'xlsx'  // ✅ <-- add this
+import * as XLSX from 'xlsx'
 
 const route = useRoute()
 const router = useRouter()
 
 const finalMark = ref(0)
 const finalWeight = ref(0)
+const gpa = ref(0)
 const studentName = ref('')
 const matricNumber = ref('')
 const courseName = ref('')
@@ -107,6 +114,10 @@ const totalCombinedWeight = computed(() =>
   totalAssessmentWeight.value + (finalWeight.value || 0)
 )
 
+const gpaDisplay = computed(() =>
+  gpa.value !== null && gpa.value !== undefined ? Number(gpa.value).toFixed(2) : '-'
+)
+
 onMounted(async () => {
   try {
     const { course_id, student_id } = route.params
@@ -114,6 +125,7 @@ onMounted(async () => {
     const data = await res.json()
 
     finalMark.value = data.final_mark ?? 0
+    gpa.value = data.gpa ?? 0
     studentName.value = data.name || ''
     matricNumber.value = data.matric_number || ''
     courseName.value = data.course_name || ''
@@ -155,19 +167,17 @@ async function deleteFinalMark() {
   router.push('/lecturer/final-exams')
 }
 
-// ✅ Export to Excel
 function downloadExcel() {
-  // prepare data
   const data = [
     { Label: 'Course', Value: courseName.value },
     { Label: 'Student', Value: `${studentName.value} (${matricNumber.value})` },
     { Label: 'Final Mark', Value: finalMark.value },
+    { Label: 'GPA', Value: gpaDisplay.value },
     { Label: 'Final Weight', Value: `${finalWeight.value}%` },
     { Label: 'Total Assessments Weight', Value: `${totalAssessmentWeight.value}%` },
     { Label: 'Total Combined Weight', Value: `${totalCombinedWeight.value}%` }
   ]
 
-  // flatten assessments
   const assessmentData = assessments.value.map(a => ({
     Title: a.title,
     Type: a.type,
@@ -175,16 +185,13 @@ function downloadExcel() {
     Weight: `${a.weight}%`
   }))
 
-  // create sheet
   const ws1 = XLSX.utils.json_to_sheet(data)
   const ws2 = XLSX.utils.json_to_sheet(assessmentData)
 
-  // create workbook
   const wb = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(wb, ws1, "Summary")
   XLSX.utils.book_append_sheet(wb, ws2, "Assessments")
 
-  // download
   XLSX.writeFile(wb, `Final_Exam_${studentName.value || 'Student'}.xlsx`)
 }
 </script>

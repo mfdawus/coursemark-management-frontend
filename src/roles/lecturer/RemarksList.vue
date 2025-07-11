@@ -10,30 +10,35 @@
           <th class="p-2 border">Course Code</th>
           <th class="p-2 border">Course Name</th>
           <th class="p-2 border">Final Mark</th>
+          <th class="p-2 border">GPA</th>
           <th class="p-2 border">Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in students" :key="`${row.student_id}-${row.course_id}`">
-          <td class="p-2 border">{{ row.student_name }}</td>
-          <td class="p-2 border">{{ row.matric_number }}</td>
-          <td class="p-2 border">{{ row.course_code }}</td>
-          <td class="p-2 border">{{ row.course_name }}</td>
-          <td class="p-2 border">
-            <span v-if="row.final_mark !== null">{{ row.final_mark }}</span>
-            <span v-else class="text-gray-400 italic">Not entered</span>
-          </td>
-          <td class="p-2 border">
-  <router-link 
-    :to="`/lecturer/remarks/${row.course_id}/${row.student_id}`"
-    class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-  >
-    ✍️ Add/Edit Remark
-  </router-link>
-</td>
+  <tr v-for="row in students" :key="`${row.student_id}-${row.course_id}`">
+    <td class="p-2 border">{{ row.student_name }}</td>
+    <td class="p-2 border">{{ row.matric_number }}</td>
+    <td class="p-2 border">{{ row.course_code }}</td>
+    <td class="p-2 border">{{ row.course_name }}</td>
+    <td class="p-2 border">
+      <span v-if="row.final_mark !== null">{{ row.final_mark }}</span>
+      <span v-else class="text-gray-400 italic">Not entered</span>
+    </td>
+    <td class="p-2 border">
+      <span v-if="row.gpa !== null && row.gpa !== undefined">{{ Number(row.gpa).toFixed(2) }}</span>
+      <span v-else class="text-gray-400 italic">-</span>
+    </td>
+    <td class="p-2 border">
+      <router-link 
+        :to="`/lecturer/remarks/${row.course_id}/${row.student_id}`"
+        class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+      >
+        ✍️ Add/Edit Remark
+      </router-link>
+    </td>
+  </tr>
+</tbody>
 
-        </tr>
-      </tbody>
     </table>
 
     <div v-if="!students.length" class="mt-6 text-center text-gray-500">

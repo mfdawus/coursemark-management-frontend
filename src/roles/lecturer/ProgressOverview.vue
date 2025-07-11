@@ -27,12 +27,13 @@
       <th># Marks</th>
       <th>Total Marks</th>
       <th>Final Exam</th>
+      <th>GPA</th>
       <th># Remarks</th>
       <th>Progress</th>
     </tr>
   </thead>
   <tbody>
-    <tr v-for="row in progressData" :key="row.student_id + '-' + row.course_id">
+        <tr v-for="row in progressData" :key="row.student_id + '-' + row.course_id">
       <td>{{ row.student_name }}</td>
       <td>{{ row.matric_number }}</td>
       <td>{{ row.course_name }}</td>
@@ -40,6 +41,10 @@
       <td>{{ row.marks_count }}</td>
       <td>{{ row.total_marks }}</td>
       <td>{{ row.final_mark ?? '-' }}</td>
+      <td>
+        <span v-if="row.gpa !== null && row.gpa !== undefined">{{ Number(row.gpa).toFixed(2) }}</span>
+        <span v-else class="text-gray-400 italic">-</span>
+      </td>
       <td>{{ row.remark_count }}</td>
       <td>
         <div class="progress-bar-container">
