@@ -19,8 +19,8 @@
           </router-link>
         </li>
         <li class="nav-item mb-2">
-          <router-link class="nav-link text-white" to="/advisor">
-            <span>✨</span> Advisee Next Function
+          <router-link class="nav-link text-white" to="/advisor/rankings">
+            <span>🏅</span> Student Rankings & Comparison
           </router-link>
         </li>
         <button class="btn btn-outline-light w-100" @click="logout">

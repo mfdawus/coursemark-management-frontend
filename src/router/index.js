@@ -113,6 +113,10 @@ const routes = [
       {
         path: 'adviseereport',
         component: () => import('../roles/advisor/AdviseeReport.vue'),
+      },
+      {
+        path: 'rankings',
+        component: () => import('../roles/advisor/AdvisorRankings.vue'),
       }
     ]
   },
