@@ -1,89 +1,120 @@
 <template>
-  <div class="p-6">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h3 class="text-xl font-semibold mb-2">Total Students</h3>
-        <p class="text-3xl font-bold">{{ totalStudents }}</p>
+  <div class="container-fluid py-4">
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body text-center">
+            <h6 class="text-uppercase text-muted mb-2">Total Students</h6>
+            <h4 class="text-dark font-weight-bold">{{ totalStudents }}</h4>
+          </div>
+        </div>
       </div>
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h3 class="text-xl font-semibold mb-2">Avg Weight Completed</h3>
-        <p class="text-3xl font-bold">{{ avgWeight.toFixed(1) }}%</p>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body text-center">
+            <h6 class="text-uppercase text-muted mb-2">Avg Weight Completed</h6>
+            <h4 class="text-dark font-weight-bold">{{ avgWeight.toFixed(1) }}%</h4>
+          </div>
+        </div>
       </div>
-      <div class="bg-white p-4 rounded-2xl shadow">
-        <h3 class="text-xl font-semibold mb-2">Total Remarks</h3>
-        <p class="text-3xl font-bold">{{ totalRemarks }}</p>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body text-center">
+            <h6 class="text-uppercase text-muted mb-2">Total Remarks</h6>
+            <h4 class="text-dark font-weight-bold">{{ totalRemarks }}</h4>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto p-6">
-  <div class="overflow-x-auto rounded-2xl shadow">
-   <table class="progress-table">
-  <thead>
-    <tr>
-      <th>Student</th>
-      <th>Matric</th>
-      <th>Course</th>
-      <th># Assessments</th>
-      <th># Marks</th>
-      <th>Total Marks</th>
-      <th>Final Exam</th>
-      <th>GPA</th>
-      <th># Remarks</th>
-      <th>Progress</th>
-    </tr>
-  </thead>
-  <tbody>
-        <tr v-for="row in progressData" :key="row.student_id + '-' + row.course_id">
-      <td>{{ row.student_name }}</td>
-      <td>{{ row.matric_number }}</td>
-      <td>{{ row.course_name }}</td>
-      <td>{{ row.assessment_count }}</td>
-      <td>{{ row.marks_count }}</td>
-      <td>{{ row.total_marks }}</td>
-      <td>{{ row.final_mark ?? '-' }}</td>
-      <td>
-        <span v-if="row.gpa !== null && row.gpa !== undefined">{{ Number(row.gpa).toFixed(2) }}</span>
-        <span v-else class="text-gray-400 italic">-</span>
-      </td>
-      <td>{{ row.remark_count }}</td>
-      <td>
-        <div class="progress-bar-container">
-          <div class="progress-bar" :style="{ width: (row.total_weight_completed)+'%' }"></div>
+    <!-- Progress Table -->
+    <div class="card shadow-sm">
+      <div class="card-body table-responsive">
+        <h5 class="mb-3">Student Progress Overview</h5>
+        <table class="table align-items-center table-flush table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th>Student</th>
+              <th>Matric</th>
+              <th>Course</th>
+              <th># Assessments</th>
+              <th># Marks</th>
+              <th>Total Marks</th>
+              <th>Final Exam</th>
+              <th>GPA</th>
+              <th># Remarks</th>
+              <th>Progress</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="row in progressData"
+              :key="row.student_id + '-' + row.course_id"
+            >
+              <td>{{ row.student_name }}</td>
+              <td>{{ row.matric_number }}</td>
+              <td>{{ row.course_name }}</td>
+              <td>{{ row.assessment_count }}</td>
+              <td>{{ row.marks_count }}</td>
+              <td>{{ row.total_marks }}</td>
+              <td>{{ row.final_mark ?? '-' }}</td>
+              <td>
+                <span v-if="row.gpa !== null && row.gpa !== undefined">
+                  {{ Number(row.gpa).toFixed(2) }}
+                </span>
+                <span v-else class="text-muted">-</span>
+              </td>
+              <td>{{ row.remark_count }}</td>
+              <td style="min-width: 120px;">
+                <div class="progress" style="height: 8px;">
+                  <div
+                    class="progress-bar bg-info"
+                    :style="{ width: row.total_weight_completed + '%' }"
+                    role="progressbar"
+                  ></div>
+                </div>
+                <small class="text-muted">{{ row.total_weight_completed }}%</small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div v-if="!progressData.length" class="text-center text-muted py-4">
+          No student progress data available.
         </div>
-        <small>{{ row.total_weight_completed }}%</small>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-
-
-  </div>
-</div>
-
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import axios from 'axios'
+import { ref, onMounted, computed } from "vue";
+import axios from "axios";
 
-const progressData = ref([])
+const progressData = ref([]);
 
-const totalStudents = computed(() => progressData.value.length)
+const totalStudents = computed(() => progressData.value.length);
 const avgWeight = computed(() => {
-  if (progressData.value.length === 0) return 0
-  const total = progressData.value.reduce((sum, r) => sum + (parseFloat(r.total_weight_completed) || 0), 0)
-  return total / progressData.value.length
-})
+  if (progressData.value.length === 0) return 0;
+  const total = progressData.value.reduce(
+    (sum, r) => sum + (parseFloat(r.total_weight_completed) || 0),
+    0,
+  );
+  return total / progressData.value.length;
+});
 const totalRemarks = computed(() => {
-  return progressData.value.reduce((sum, r) => sum + (parseInt(r.remark_count) || 0), 0)
-})
+  return progressData.value.reduce(
+    (sum, r) => sum + (parseInt(r.remark_count) || 0),
+    0,
+  );
+});
 
 onMounted(async () => {
-  const res = await axios.get('/api/lecturer/progress')
-  progressData.value = res.data
-})
+  const res = await axios.get("/api/lecturer/progress");
+  progressData.value = res.data;
+});
 </script>
 <style>
 .progress-table {
@@ -108,7 +139,9 @@ onMounted(async () => {
 }
 
 .progress-table tr {
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .progress-table tr:nth-child(even) {
@@ -134,4 +167,3 @@ onMounted(async () => {
   transition: width 0.4s ease;
 }
 </style>
-

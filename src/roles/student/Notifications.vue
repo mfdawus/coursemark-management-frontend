@@ -1,58 +1,67 @@
 <template>
-  <div class="notifications-page">
-    <h2>🔔 Notifications</h2>
+  <div class="notifications-page px-4 py-3">
+    <!-- Header -->
+    <h3 class="fw-bold text-white mb-4">Notifications</h3>
 
-    <div v-if="notifications.length === 0">
-      <p>No notifications yet.</p>
+    <!-- No Notifications -->
+    <div v-if="notifications.length === 0" class="alert alert-white">
+      No notifications yet.
     </div>
 
-    <ul class="notification-list">
-      <li
+    <!-- Notification List -->
+    <div v-else class="list-group shadow-sm">
+      <div
         v-for="note in notifications"
         :key="note.id"
-        :class="{ unread: note.is_read === 0 }"
+        class="list-group-item list-group-item-action"
+        :class="note.is_read === 0 ? 'bg-light border-start border-4 border-primary' : ''"
       >
-        <h4>{{ note.title }}</h4>
-        <p>{{ note.message }}</p>
-        <small>{{ formatDate(note.created_at) }}</small>
-      </li>
-    </ul>
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="mb-1 fw-semibold text-dark">{{ note.title }}</h6>
+            <p class="mb-1 text-muted small">{{ note.message }}</p>
+            <small class="text-secondary">{{ formatDate(note.created_at) }}</small>
+          </div>
+          <span v-if="note.is_read === 0" class="badge bg-primary">New</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'StudentNotifications',
+  name: "StudentNotifications",
   data() {
     return {
-      notifications: []
+      notifications: [],
     };
+  },
+  mounted() {
+    this.fetchNotifications();
   },
   methods: {
     fetchNotifications() {
-      fetch('/api/student/notifications')
-        .then(res => res.json())
-        .then(data => {
+      fetch("/api/student/notifications")
+        .then((res) => res.json())
+        .then((data) => {
           this.notifications = data || [];
         })
-        .catch(err => {
-          console.error('Failed to load notifications', err);
+        .catch((err) => {
+          console.error("Failed to load notifications", err);
         });
     },
     formatDate(dateStr) {
       const date = new Date(dateStr);
       return date.toLocaleString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
-    }
+    },
   },
-  mounted() {
-    this.fetchNotifications();
-  }
 };
 </script>
 

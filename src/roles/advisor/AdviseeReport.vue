@@ -1,26 +1,94 @@
 <template>
-  <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2><span>📄</span> Progress Overview</h2>
-      <div>
-        <button class="btn btn-outline-primary me-2" @click="printReport"><i class="bi bi-printer"></i> Print</button>
-        <button class="btn btn-outline-success" @click="exportCSV"><i class="bi bi-file-earmark-spreadsheet"></i> Export CSV</button>
-      </div>
+  <div class="px-4 py-2">
+    <!-- Title and Export Buttons -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-3xl font-bold text-white flex items-center gap-2">
+        Progress Overview
+      </h2>
+
     </div>
 
-    <!-- Full Mark Breakdown Section -->
-    <div ref="markBreakdown" class="mt-5">
-      <h4>Full Mark Breakdown</h4>
-      <table class="table table-bordered table-striped mt-3">
-        <thead class="table-dark">
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-sm p-3 mb-4 flex flex-wrap gap-3 text-sm items-center">
+      <label>
+        Course:
+        <select v-model="filterCourse" class="form-select form-select-sm">
+          <option value="">All</option>
+          <option v-for="course in courseOptions" :key="course" :value="course">
+            {{ course }}
+          </option>
+        </select>
+      </label>
+      <label>
+        Student:
+        <input
+          v-model="filterStudent"
+          class="form-control form-control-sm"
+          placeholder="Search student..."
+        />
+      </label>
+      <label>
+        Status:
+        <select v-model="filterStatus" class="form-select form-select-sm">
+          <option value="">All</option>
+          <option value="Good Standing">Good Standing</option>
+          <option value="Warning">Warning</option>
+          <option value="Probation">Probation</option>
+        </select>
+      </label>
+      <label>
+        Semester:
+        <select v-model="filterSemester" class="form-select form-select-sm">
+          <option value="">All</option>
+          <option v-for="sem in semesterOptions" :key="sem" :value="sem">
+            {{ sem }}
+          </option>
+        </select>
+      </label>
+      <label>
+        Year:
+        <select v-model="filterYear" class="form-select form-select-sm">
+          <option value="">All</option>
+          <option v-for="year in yearOptions" :key="year" :value="year">
+            {{ year }}
+          </option>
+        </select>
+      </label>
+
+
+      <argon-button color="primary" size="sm" @click="printReport"  class= "ms-2 mt-2 float-end">
+        <template #icon>
+          <i class="ni ni-print text-white float-end"></i>
+        </template>
+        Print
+      </argon-button>
+
+      <argon-button color="success" size="sm" @click="exportCSV" class= "ms-2 mt-2 float-end"> 
+        <template #icon>
+          <i class="ni ni-archive-2 text-white"></i>
+        </template>
+        Export CSV
+      </argon-button>
+
+      <argon-button color="secondary" size="sm" @click="resetFilters"  class= "ms-2 mt-2 float-end">
+        Reset
+      </argon-button>
+
+    </div>
+
+    <!-- Mark Breakdown Table -->
+    <div ref="markBreakdown" class="bg-white rounded-lg shadow-sm p-3 mb-4 overflow-auto">
+      <h4 class="text-base font-semibold text-slate-700 mb-3">Full Mark Breakdown</h4>
+      <table class="table w-full text-sm border text-slate-700">
+        <thead class="bg-slate-100">
           <tr>
             <th>Student Name</th>
-            <th>Student ID</th>
+            <th>ID</th>
             <th>Course</th>
-            <th>Assignment</th>
-            <th>Quiz</th>
-            <th>Lab</th>
-            <th>Exercise</th>
+            <th>A</th>
+            <th>Q</th>
+            <th>L</th>
+            <th>E</th>
             <th>Test</th>
             <th>Final</th>
             <th>Total</th>
@@ -29,56 +97,58 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="student in students" :key="student.student_id">
+          <tr
+            v-for="student in filteredStudents"
+            :key="student.student_id + '-' + student.course_name"
+            class="hover:bg-slate-50 border-t"
+          >
             <td>{{ student.student_name }}</td>
             <td>{{ student.student_id }}</td>
             <td>{{ student.course_name }}</td>
-            <td>{{ formatComponent(student.assignment) }}</td>
-            <td>{{ formatComponent(student.quiz) }}</td>
-            <td>{{ formatComponent(student.lab) }}</td>
-            <td>{{ formatComponent(student.exercise) }}</td>
-            <td>{{ formatComponent(student.midterm) }}</td>
-            <td>{{ formatComponent(student.final) }}</td>
-            <td>{{ formatComponent(student.total) }}</td>
-            <td>
-              <span class="badge" :class="getStatusBadge(student.total)">
+            <td class="text-center">{{ formatComponent(student.assignment) }}</td>
+            <td class="text-center">{{ formatComponent(student.quiz) }}</td>
+            <td class="text-center">{{ formatComponent(student.lab) }}</td>
+            <td class="text-center">{{ formatComponent(student.exercise) }}</td>
+            <td class="text-center">{{ formatComponent(student.midterm) }}</td>
+            <td class="text-center">{{ formatComponent(student.final) }}</td>
+            <td class="text-center font-bold">{{ formatComponent(student.total) }}</td>
+            <td class="text-center">
+              <span
+                class="text-xs px-2 py-1 rounded text-white"
+                :class="getStatusBadge(student.total)"
+              >
                 {{ getStatusLabel(student.total) }}
               </span>
             </td>
-            <td>
-              <button class="btn btn-sm btn-outline-dark" @click="printReport(student)">
-                🖨️ Print
-              </button>
+            <td class="text-center">
+              <argon-button size="sm" color="dark" outline @click="printReport(student)">
+                Print
+              </argon-button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Class Average Section -->
-    <div ref="classAverage" class="mt-5">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Class Average per Component</h4>
-        <div class="d-flex align-items-center gap-3">
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="overallAverage" 
-                   v-model="averageType" value="overall" @change="calculateAverages">
-            <label class="form-check-label" for="overallAverage">
-              Overall Average
-            </label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="courseAverage" 
-                   v-model="averageType" value="course" @change="calculateAverages">
-            <label class="form-check-label" for="courseAverage">
-              Per Course
-            </label>
-          </div>
-          <select v-if="averageType === 'course'" 
-                  class="form-select form-select-sm" 
-                  style="width: auto;"
-                  v-model="selectedCourse" 
-                  @change="calculateAverages">
+    <!-- Class Averages Table -->
+    <div ref="classAverage" class="bg-white rounded-lg shadow-sm p-3">
+      <div class="flex justify-between items-center mb-4">
+        <h4 class="text-base font-semibold text-slate-700">Class Averages</h4>
+        <div class="flex items-center gap-3 text-sm">
+          <label class="flex items-center gap-1">
+            <input type="radio" value="overall" v-model="averageType" @change="calculateAverages" />
+            Overall
+          </label>
+          <label class="flex items-center gap-1">
+            <input type="radio" value="course" v-model="averageType" @change="calculateAverages" />
+            Per Course
+          </label>
+          <select
+            v-if="averageType === 'course'"
+            v-model="selectedCourse"
+            class="form-select form-select-sm border rounded px-2 py-1"
+            @change="calculateAverages"
+          >
             <option value="">Select Course</option>
             <option v-for="course in availableCourses" :key="course" :value="course">
               {{ course }}
@@ -86,35 +156,42 @@
           </select>
         </div>
       </div>
-      
-      <table class="table table-bordered table-hover mt-3">
-        <thead class="table-secondary">
-          <tr>
-            <th>Component</th>
-            <th>Average Score</th>
-            <th v-if="averageType === 'course' && selectedCourse">Course</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="avg in averages" :key="avg.component">
-            <td>{{ avg.component }}</td>
-            <td>{{ avg.average }}</td>
-            <td v-if="averageType === 'course' && selectedCourse">{{ selectedCourse }}</td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <div v-if="averageType === 'course' && !selectedCourse" class="alert alert-info mt-3">
-        Please select a course to view its averages.
+      <div class="overflow-auto">
+        <table class="table w-full text-sm border">
+          <thead class="bg-slate-100">
+            <tr>
+              <th>Component</th>
+              <th>Average</th>
+              <th v-if="averageType === 'course' && selectedCourse">Course</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="avg in averages" :key="avg.component" class="border-t">
+              <td>{{ avg.component }}</td>
+              <td>{{ avg.average }}</td>
+              <td v-if="averageType === 'course' && selectedCourse">{{ selectedCourse }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        v-if="averageType === 'course' && !selectedCourse"
+        class="alert alert-info mt-4 text-sm text-center"
+      >
+        Please select a course to view averages.
       </div>
     </div>
-    <!-- Hidden printable area -->
-    <div id="printArea" ref="printArea" style="display: none;"></div>
+
+    <!-- Hidden Printable Area -->
+    <div id="printArea" ref="printArea" style="display: none"></div>
   </div>
 </template>
 
+
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import ArgonButton from "@/components/ArgonButton.vue";
+
 
 // Refs for scrolling
 const markBreakdown = ref(null)
@@ -126,6 +203,45 @@ const averages = ref([])
 const averageType = ref('overall')
 const selectedCourse = ref('')
 const availableCourses = ref([])
+
+// Filtering data
+const filterCourse = ref('')
+const filterStudent = ref('')
+const filterStatus = ref('')
+const filterSemester = ref('')
+const filterYear = ref('')
+
+const courseOptions = computed(() => {
+  return [...new Set(students.value.map(s => s.course_name).filter(Boolean))]
+})
+const semesterOptions = computed(() => {
+  return [...new Set(students.value.map(s => s.semester).filter(Boolean))]
+})
+const yearOptions = computed(() => {
+  return [...new Set(students.value.map(s => s.year).filter(Boolean))].sort((a, b) => b - a)
+})
+
+const filteredStudents = computed(() => {
+  return students.value.filter(s => {
+    const courseMatch = !filterCourse.value || s.course_name === filterCourse.value
+    const studentMatch = !filterStudent.value ||
+      (s.student_name && s.student_name.toLowerCase().includes(filterStudent.value.toLowerCase())) ||
+      (s.student_id && s.student_id.toLowerCase().includes(filterStudent.value.toLowerCase()))
+    const statusLabel = getStatusLabel(s.total)
+    const statusMatch = !filterStatus.value || statusLabel === filterStatus.value
+    const semesterMatch = !filterSemester.value || s.semester === filterSemester.value
+    const yearMatch = !filterYear.value || s.year == filterYear.value
+    return courseMatch && studentMatch && statusMatch && semesterMatch && yearMatch
+  })
+})
+
+function resetFilters() {
+  filterCourse.value = ''
+  filterStudent.value = ''
+  filterStatus.value = ''
+  filterSemester.value = ''
+  filterYear.value = ''
+}
 
 // Fetch data on mount
 onMounted(async () => {
@@ -435,7 +551,6 @@ const getStatusClass = (total) => {
 // Add formatting function for table display
 const formatComponent = (val) => (val && val !== 0 ? parseFloat(val).toFixed(2) : '-')
 </script>
-
 
 <style scoped>
 .badge {

@@ -1,7 +1,7 @@
 <template>
   <div class="p-4">
     <h2 class="text-2xl font-bold mb-4">Marks and Feedback</h2>
-    <Tabs v-model="currentTab" defaultValue="coursework" class="w-full">
+    <Tabs v-model="currentTab" default-value="coursework" class="w-full">
       <TabsList>
         <TabsTrigger value="coursework">Coursework Marks (70%)</TabsTrigger>
         <TabsTrigger value="final">Final Exam Marks (30%)</TabsTrigger>
@@ -9,7 +9,7 @@
       </TabsList>
 
       <!-- Coursework Marks -->
-      <TabsContent value="coursework" ref="courseworkSection">
+      <TabsContent ref="courseworkSection" value="coursework">
         <Card>
           <CardContent>
             <table class="w-full table-auto border">
@@ -26,13 +26,28 @@
                 <tr v-for="student in students" :key="student.id">
                   <td class="p-2 border">{{ student.name }}</td>
                   <td class="p-2 border">
-                    <input type="number" v-model.number="student.assignment" class="input" max="100" />
+                    <input
+                      v-model.number="student.assignment"
+                      type="number"
+                      class="input"
+                      max="100"
+                    />
                   </td>
                   <td class="p-2 border">
-                    <input type="number" v-model.number="student.quiz" class="input" max="100" />
+                    <input
+                      v-model.number="student.quiz"
+                      type="number"
+                      class="input"
+                      max="100"
+                    />
                   </td>
                   <td class="p-2 border">
-                    <input type="number" v-model.number="student.project" class="input" max="100" />
+                    <input
+                      v-model.number="student.project"
+                      type="number"
+                      class="input"
+                      max="100"
+                    />
                   </td>
                   <td class="p-2 border">
                     <Button @click="saveCoursework(student)">Save</Button>
@@ -45,7 +60,7 @@
       </TabsContent>
 
       <!-- Final Exam Marks -->
-      <TabsContent value="final" ref="finalSection">
+      <TabsContent ref="finalSection" value="final">
         <Card>
           <CardContent>
             <table class="w-full table-auto border">
@@ -60,7 +75,12 @@
                 <tr v-for="student in students" :key="student.id">
                   <td class="p-2 border">{{ student.name }}</td>
                   <td class="p-2 border">
-                    <input type="number" v-model.number="student.finalExam" class="input" max="100" />
+                    <input
+                      v-model.number="student.finalExam"
+                      type="number"
+                      class="input"
+                      max="100"
+                    />
                   </td>
                   <td class="p-2 border">
                     <Button @click="saveFinalExam(student)">Save</Button>
@@ -73,12 +93,16 @@
       </TabsContent>
 
       <!-- Feedback -->
-      <TabsContent value="feedback" ref="feedbackSection">
+      <TabsContent ref="feedbackSection" value="feedback">
         <Card>
           <CardContent>
             <div v-for="student in students" :key="student.id" class="mb-4">
               <h4 class="font-semibold">{{ student.name }}</h4>
-              <textarea v-model="student.feedback" class="w-full p-2 border rounded" rows="3"></textarea>
+              <textarea
+                v-model="student.feedback"
+                class="w-full p-2 border rounded"
+                rows="3"
+              ></textarea>
               <div class="mt-2">
                 <Button @click="saveFeedback(student)">Save Feedback</Button>
               </div>
@@ -91,42 +115,66 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
-const currentTab = ref('coursework');
+const currentTab = ref("coursework");
 
 const courseworkSection = ref(null);
 const finalSection = ref(null);
 const feedbackSection = ref(null);
 
 const students = ref([
-  { id: 1, name: 'Ali Bin Ahmad', assignment: 0, quiz: 0, project: 0, finalExam: 0, feedback: '' },
-  { id: 2, name: 'Siti Nur Aisyah', assignment: 0, quiz: 0, project: 0, finalExam: 0, feedback: '' },
-  { id: 3, name: 'Tan Wei Jie', assignment: 0, quiz: 0, project: 0, finalExam: 0, feedback: '' }
+  {
+    id: 1,
+    name: "Ali Bin Ahmad",
+    assignment: 0,
+    quiz: 0,
+    project: 0,
+    finalExam: 0,
+    feedback: "",
+  },
+  {
+    id: 2,
+    name: "Siti Nur Aisyah",
+    assignment: 0,
+    quiz: 0,
+    project: 0,
+    finalExam: 0,
+    feedback: "",
+  },
+  {
+    id: 3,
+    name: "Tan Wei Jie",
+    assignment: 0,
+    quiz: 0,
+    project: 0,
+    finalExam: 0,
+    feedback: "",
+  },
 ]);
 
 watch(currentTab, (newTab) => {
   setTimeout(() => {
-    if (newTab === 'coursework' && courseworkSection.value?.$el) {
-      courseworkSection.value.$el.scrollIntoView({ behavior: 'smooth' });
-    } else if (newTab === 'final' && finalSection.value?.$el) {
-      finalSection.value.$el.scrollIntoView({ behavior: 'smooth' });
-    } else if (newTab === 'feedback' && feedbackSection.value?.$el) {
-      feedbackSection.value.$el.scrollIntoView({ behavior: 'smooth' });
+    if (newTab === "coursework" && courseworkSection.value?.$el) {
+      courseworkSection.value.$el.scrollIntoView({ behavior: "smooth" });
+    } else if (newTab === "final" && finalSection.value?.$el) {
+      finalSection.value.$el.scrollIntoView({ behavior: "smooth" });
+    } else if (newTab === "feedback" && feedbackSection.value?.$el) {
+      feedbackSection.value.$el.scrollIntoView({ behavior: "smooth" });
     }
   }, 100); // slight delay to ensure DOM updates
 });
 
 function saveCoursework(student) {
-  console.log('Saved coursework marks:', student);
+  console.log("Saved coursework marks:", student);
 }
 
 function saveFinalExam(student) {
-  console.log('Saved final exam marks:', student);
+  console.log("Saved final exam marks:", student);
 }
 
 function saveFeedback(student) {
-  console.log('Saved feedback:', student);
+  console.log("Saved feedback:", student);
 }
 </script>
 

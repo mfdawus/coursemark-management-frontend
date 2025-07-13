@@ -1,149 +1,168 @@
-import { createRouter, createWebHistory } from 'vue-router'
+// src/router/index.js
+import { createRouter, createWebHistory } from "vue-router";
 
-const StudentLogin = () => import('../roles/StudentLogin.vue')
-const StaffLogin = () => import('../roles/StaffLogin.vue')
-const StudentDashboard = () => import('../roles/student/StudentMainPage.vue')
-const LecturerDashboard = () => import('../roles/lecturer/LecturerDashboard.vue')
-const AdvisorDashboard = () => import('../roles/advisor/AdvisorMainPage.vue')
-const AdminPanel = () => import('../roles/admin/AdminMain.vue')
+const StudentLogin = () => import("../roles/StudentLogin.vue");
+const StaffLogin = () => import("../roles/StaffLogin.vue");
 
 const routes = [
-  { path: '/', redirect: '/login' },
-  { path: '/login', component: StudentLogin },
-  { path: '/login/staff', component: StaffLogin },
+  { path: "/", redirect: "/login" },
+  { path: "/login", component: StudentLogin },
+  { path: "/login/staff", component: StaffLogin },
   {
-    path: '/student',
-    component: StudentDashboard,
-    children: [
-      { path: 'dashboard', component: () => import('../roles/student/StudentDashboard.vue') },
-      { path: 'mymarks', component: () => import('../roles/student/MyMarks.vue') },
-      { path: 'performancetrend', component: () => import('../roles/student/PerformanceTrend.vue') },
-      { path: 'whatif', component: () => import('../roles/student/WhatIf.vue') },
-      { path: 'rankings', component: () => import('../roles/student/Rankings.vue') },
-      { path: 'feedbackremarks', component: () => import('../roles/student/FeedbackRemarks.vue') },
-      { path: 'notifications', component: () => import('../roles/student/Notifications.vue') },
-      { path: 'recheckrequests', component: () => import('../roles/student/RecheckRequest.vue') },
-      { path: 'profile', component: () => import('../roles/student/Profile.vue') },
-
-    ]
-  },
-  {
-    path: '/lecturer',
-    component: LecturerDashboard,
+    path: "/student",
     children: [
       {
-        path: 'courses',
-        component: () => import('../roles/lecturer/CourseStudentManager.vue'),
+        path: "dashboard",
+        component: () => import("../roles/student/StudentDashboard.vue"),
       },
       {
-        path: 'marks',
-        component: () => import('../roles/lecturer/MarksAndFeedback.vue'),
+        path: "mymarks",
+        component: () => import("../roles/student/MyMarks.vue"),
       },
       {
-        path: 'marks/:course_id/:student_id',
-        name: 'marks-entry',
-        component: () => import('../roles/lecturer/MarksEntryPage.vue'),
-        props: true
+        path: "performancetrend",
+        component: () => import("../roles/student/PerformanceTrend.vue"),
       },
       {
-        path: 'progress',
-        component: () => import('../roles/lecturer/ProgressOverview.vue'),
+        path: "whatif",
+        component: () => import("../roles/student/WhatIf.vue"),
       },
       {
-        path: 'analytics',
-        component: () => import('../roles/lecturer/LecturerProgress.vue'),
+        path: "rankings",
+        component: () => import("../roles/student/Rankings.vue"),
       },
       {
-        path: 'enrollments',
-        component: () => import('../roles/lecturer/StudentEnrollments.vue'),
+        path: "notifications",
+        component: () => import("../roles/student/Notifications.vue"),
       },
       {
-        path: '/lecturer/assessments',
-        component: () => import('../roles/lecturer/AssessmentManager.vue')
+        path: "recheckrequests",
+        component: () => import("../roles/student/RecheckRequest.vue"),
       },
       {
-        path: '/lecturer/assignments',
-        component: () => import('../roles/lecturer/AssignAssessments.vue')
+        path: "profile",
+        component: () => import("../roles/student/Profile.vue"),
       },
-      {
-        path: 'final-exams',
-        component: () => import('../roles/lecturer/FinalExamList.vue'),
-      },
-      {
-        path: 'final-exams/:course_id/:student_id',
-        component: () => import('../roles/lecturer/FinalExamEntry.vue'),
-        props: true
-      },
-      {
-        path: '/lecturer/remarks',
-        component: () => import('../roles/lecturer/RemarksList.vue'),
-        props: true
-      },
-      {
-        path: '/lecturer/remarks/:course_id/:student_id',
-        component: () => import('../roles/lecturer/RemarkEntry.vue'),
-        props: true
-      },
-       {
-        path: '/lecturer/progress',
-        component: () => import('../roles/lecturer/ProgressOverview.vue'),
-        props: true
-      },
-      {
-        path: '/lecturer/analyticss',
-        component: () => import('../roles/lecturer/LecturerAnalytics.vue'),
-        props: true
-      }
-    ]
-  },
-
-
-  {
-    path: '/advisor',
-    component: AdvisorDashboard,
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('../roles/advisor/AdvisorDashboard.vue'),
-      },
-      {
-        path: 'adviseelist',
-        component: () => import('../roles/advisor/AdviseeList.vue'),
-      },
-      {
-        path: 'adviseereport',
-        component: () => import('../roles/advisor/AdviseeReport.vue'),
-      },
-      {
-        path: 'rankings',
-        component: () => import('../roles/advisor/AdvisorRankings.vue'),
-      }
-    ]
+    ],
   },
   {
-    path: '/admin',
-    component: AdminPanel,
+    path: "/lecturer",
     children: [
       {
-        path: 'users',
-        component: () => import('../roles/admin/UserList.vue'),
+        path: "courses",
+        component: () => import("../roles/lecturer/CourseStudentManager.vue"),
       },
       {
-        path: 'courses',
-        component: () => import('../roles/lecturer/CourseStudentManager.vue'),
-      }
-    ]
+        path: "marks",
+        component: () => import("../roles/lecturer/MarksAndFeedback.vue"),
+      },
+      {
+        path: "marks/:course_id/:student_id",
+        name: "marks-entry",
+        component: () => import("../roles/lecturer/MarksEntryPage.vue"),
+        props: true,
+      },
+      {
+        path: "progress",
+        component: () => import("../roles/lecturer/ProgressOverview.vue"),
+      },
+      {
+        path: "analytics",
+        component: () => import("../roles/lecturer/LecturerProgress.vue"),
+      },
+      {
+        path: "enrollments",
+        component: () => import("../roles/lecturer/StudentEnrollments.vue"),
+      },
+      {
+        path: "assessments",
+        component: () => import("../roles/lecturer/AssessmentManager.vue"),
+      },
+      {
+        path: "assignments",
+        component: () => import("../roles/lecturer/AssignAssessments.vue"),
+      },
+      {
+        path: "final-exams",
+        component: () => import("../roles/lecturer/FinalExamList.vue"),
+      },
+      {
+        path: "final-exams/:course_id/:student_id",
+        component: () => import("../roles/lecturer/FinalExamEntry.vue"),
+        props: true,
+      },
+      {
+        path: "remarks",
+        component: () => import("../roles/lecturer/RemarksList.vue"),
+      },
+      {
+        path: "remarks/:course_id/:student_id",
+        component: () => import("../roles/lecturer/RemarkEntry.vue"),
+        props: true,
+      },
+      {
+        path: "analyticss",
+        component: () => import("../roles/lecturer/LecturerAnalytics.vue"),
+        props: true,
+      },
+    ],
   },
-]
+  {
+    path: "/advisor",
+    children: [
+      {
+        path: "dashboard",
+        component: () => import("../roles/advisor/AdvisorDashboard.vue"),
+      },
+      {
+        path: "adviseelist",
+        component: () => import("../roles/advisor/AdviseeList.vue"),
+      },
+      {
+        path: "adviseereport",
+        component: () => import("../roles/advisor/AdviseeReport.vue"),
+      },
+      {
+        path: "rankings",
+        component: () => import("../roles/advisor/AdvisorRankings.vue"),
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    children: [
+      { path: "users", component: () => import("../roles/admin/UserList.vue") },
+      {
+        path: "courses",
+        component: () => import("../roles/lecturer/CourseStudentManager.vue"),
+      },
+    ],
+  },
+];
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
-})
-// in src/router/index.js, after creating the router:
-// router.beforeEach((to, from, next) => {
-//   if (to.path !== '/login' && !localStorage.getItem('role')) {
-//     return next('/login')
-//   }
-//   next()
-// })
+});
+
+// ✅ Add Auth Guard here
+router.beforeEach((to, from, next) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (to.path.startsWith("/student") && user?.role !== "student") {
+    return next("/login");
+  }
+  if (to.path.startsWith("/lecturer") && user?.role !== "lecturer") {
+    return next("/login/staff");
+  }
+  if (to.path.startsWith("/advisor") && user?.role !== "advisor") {
+    return next("/login/staff");
+  }
+  if (to.path.startsWith("/admin") && user?.role !== "admin") {
+    return next("/login/staff");
+  }
+
+  next();
+});
+
+export default router;

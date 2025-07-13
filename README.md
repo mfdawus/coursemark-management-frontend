@@ -1,4 +1,4 @@
-# course-mark-management-web-application
+# E-KLAS
 
 ## Project setup
 ```

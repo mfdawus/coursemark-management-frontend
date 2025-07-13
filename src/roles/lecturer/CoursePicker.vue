@@ -20,14 +20,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
 
-const courses = ref([])
-const loaded = ref(false)
+const courses = ref([]);
+const loaded = ref(false);
 
 onMounted(async () => {
-  const res = await fetch('/api/courses') // adjust API if needed
-  courses.value = await res.json()
-  loaded.value = true
-})
+  const res = await fetch("/api/courses"); // adjust API if needed
+  courses.value = await res.json();
+  loaded.value = true;
+});
 </script>
