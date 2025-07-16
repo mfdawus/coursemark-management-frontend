@@ -93,9 +93,17 @@ async function submit() {
             <!-- Left Form Section -->
             <div class="mx-auto col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0">
               <div class="card card-plain">
-                <div class="card-header text-start pb-0">
-                  <h4 class="font-weight-bolder">Staff Login</h4>
-                  <p class="mb-0">Enter your staff credentials to sign in</p>
+                <div class="pb-0 card-header text-start">
+                  <h2
+                    class="text-center fw-bold mb-5 py-3 px-4 border border-radius-lg shadow-sm bg-lighter text-success"
+                    style="font-size: 2.2rem; letter-spacing: 1px;"
+                  >
+                    E-KLAS <br />
+                    <span class="fs-5 text-dark">Course Management</span>
+                  </h2>
+
+                  <h4 class="font-weight-bolder">Student Login</h4>
+                  <p class="mb-0">Enter your details to sign in</p>
                 </div>
                 <div class="card-body">
                   <form @submit.prevent="submit">
