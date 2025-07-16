@@ -56,7 +56,7 @@
       </label>
 
 
-      <argon-button color="primary" size="sm" @click="printReport"  class= "ms-2 mt-2 float-end">
+      <argon-button color="primary" size="sm" @click="printTableReport"  class= "ms-2 mt-2 float-end">
         <template #icon>
           <i class="ni ni-print text-white float-end"></i>
         </template>
@@ -85,10 +85,10 @@
             <th>Student Name</th>
             <th>ID</th>
             <th>Course</th>
-            <th>A</th>
-            <th>Q</th>
-            <th>L</th>
-            <th>E</th>
+            <th>Assignment</th>
+            <th>Quiz</th>
+            <th>Lab</th>
+            <th>Exercise</th>
             <th>Test</th>
             <th>Final</th>
             <th>Total</th>
@@ -115,9 +115,9 @@
             <td class="text-center">
               <span
                 class="text-xs px-2 py-1 rounded text-white"
-                :class="getStatusBadge(student.total)"
+                :class="gradeBadgeClass(student.status)"
               >
-                {{ getStatusLabel(student.total) }}
+                {{ student.status }}
               </span>
             </td>
             <td class="text-center">
@@ -227,7 +227,7 @@ const filteredStudents = computed(() => {
     const studentMatch = !filterStudent.value ||
       (s.student_name && s.student_name.toLowerCase().includes(filterStudent.value.toLowerCase())) ||
       (s.student_id && s.student_id.toLowerCase().includes(filterStudent.value.toLowerCase()))
-    const statusLabel = getStatusLabel(s.total)
+    const statusLabel = s.status // Use the backend-provided status
     const statusMatch = !filterStatus.value || statusLabel === filterStatus.value
     const semesterMatch = !filterSemester.value || s.semester === filterSemester.value
     const yearMatch = !filterYear.value || s.year == filterYear.value
@@ -397,24 +397,21 @@ const calculateAverages = () => {
 //   classAverage.value?.scrollIntoView({ behavior: 'smooth' })
 // }
 
-const getStatusLabel = (total) => {
-  if (total >= 80) return 'Good Standing'
-  if (total >= 60) return 'Warning'
-  return 'Probation'
-}
-
-const getStatusBadge = (total) => {
-  if (total >= 80) return 'bg-success'
-  if (total >= 60) return 'bg-warning'
-  return 'bg-danger'
+function gradeBadgeClass(grade) {
+  if (["A+", "A", "A-"].includes(grade)) return "bg-success";
+  if (["B+", "B", "B-"].includes(grade)) return "bg-primary";
+  if (["C+", "C"].includes(grade)) return "bg-warning text-dark";
+  if (grade === "D") return "bg-info text-dark";
+  if (grade === "F") return "bg-danger";
+  return "bg-secondary";
 }
 
 const printReport = (student) => {
   try {
     // Format numbers safely
     const formatNumber = (num) => {
-      if (num === null || num === undefined || isNaN(num)) return '0.00'
-      return parseFloat(num).toFixed(2)
+      if (num === null || num === undefined || num === '' || isNaN(Number(num))) return '-';
+      return Number(num).toFixed(2);
     }
     
     const printableHTML = `
@@ -548,6 +545,158 @@ const getStatusClass = (total) => {
   return 'probation'
 }
 
+function exportCSV() {
+  const rows = students.value.map((student) => [
+    student.student_name,
+    student.student_id,
+    student.course_name,
+    (student.assignment !== null && student.assignment !== undefined) ? parseFloat(student.assignment).toFixed(2) : '',
+    (student.quiz !== null && student.quiz !== undefined) ? parseFloat(student.quiz).toFixed(2) : '',
+    (student.lab !== null && student.lab !== undefined) ? parseFloat(student.lab).toFixed(2) : '',
+    (student.exercise !== null && student.exercise !== undefined) ? parseFloat(student.exercise).toFixed(2) : '',
+    (student.midterm !== null && student.midterm !== undefined) ? parseFloat(student.midterm).toFixed(2) : '',
+    (student.final !== null && student.final !== undefined) ? parseFloat(student.final).toFixed(2) : '',
+    (student.total !== null && student.total !== undefined) ? parseFloat(student.total).toFixed(2) : '',
+    student.status,
+    student.semester,
+    student.year
+  ]);
+  const header = [
+    "Student Name",
+    "Student ID",
+    "Course",
+    "Assignment",
+    "Quiz",
+    "Lab",
+    "Exercise",
+    "Test",
+    "Final",
+    "Total",
+    "Status",
+    "Semester",
+    "Year"
+  ];
+  const csvContent = [header, ...rows]
+    .map((e) => e.map((x) => '"' + (x ?? "") + '"').join(","))
+    .join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "advisee_report.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+const printTableReport = () => {
+  try {
+    // Format numbers safely
+    const formatNumber = (num) => {
+      if (num === null || num === undefined || num === '' || isNaN(Number(num))) return '-';
+      return Number(num).toFixed(2);
+    }
+    const tableRows = filteredStudents.value.map(student => `
+      <tr>
+        <td>${student.student_name || 'N/A'}</td>
+        <td>${student.student_id || 'N/A'}</td>
+        <td>${student.course_name || 'N/A'}</td>
+        <td class="text-center">${formatNumber(student.assignment)}</td>
+        <td class="text-center">${formatNumber(student.quiz)}</td>
+        <td class="text-center">${formatNumber(student.lab)}</td>
+        <td class="text-center">${formatNumber(student.exercise)}</td>
+        <td class="text-center">${formatNumber(student.midterm)}</td>
+        <td class="text-center">${formatNumber(student.final)}</td>
+        <td class="text-center font-bold">${formatNumber(student.total)}</td>
+        <td class="text-center">${student.status || '-'}</td>
+        <td class="text-center">${student.semester || '-'}</td>
+        <td class="text-center">${student.year || '-'}</td>
+      </tr>
+    `).join('');
+    const printableHTML = `
+      <html>
+        <head>
+          <title>Advisee Report Table</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              padding: 2rem;
+              margin: 0;
+              background: white;
+            }
+            h2 {
+              margin-bottom: 1rem;
+              color: #333;
+              border-bottom: 2px solid #007bff;
+              padding-bottom: 10px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 1rem;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px 6px;
+              text-align: left;
+              font-size: 14px;
+            }
+            th {
+              background-color: #007bff;
+              color: white;
+              font-weight: bold;
+            }
+            tr:nth-child(even) {
+              background-color: #f8f9fa;
+            }
+          </style>
+        </head>
+        <body>
+          <h2>Advisee Report</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>ID</th>
+                <th>Course</th>
+                <th>Assignment</th>
+                <th>Quiz</th>
+                <th>Lab</th>
+                <th>Exercise</th>
+                <th>Test</th>
+                <th>Final</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Semester</th>
+                <th>Year</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>
+          <div style="margin-top: 30px; font-size: 12px; color: #666;">
+            <p><strong>Report Generated:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+          </div>
+        </body>
+      </html>
+    `;
+    const printWindow = window.open('', '_blank', 'width=1000,height=700');
+    if (printWindow) {
+      printWindow.document.write(printableHTML);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+      }, 1000);
+    } else {
+      alert('Popup blocked! Please allow popups for this site and try again.');
+    }
+  } catch (error) {
+    console.error('Print error:', error);
+    alert('Error generating print report. Please try again.');
+  }
+}
+
 // Add formatting function for table display
 const formatComponent = (val) => (val && val !== 0 ? parseFloat(val).toFixed(2) : '-')
 </script>
@@ -559,3 +708,4 @@ const formatComponent = (val) => (val && val !== 0 ? parseFloat(val).toFixed(2) 
   border-radius: 8px;
 }
 </style>
+
