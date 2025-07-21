@@ -213,7 +213,9 @@ const gpaChartData = ref({
 const topStudents = ref([]);
 
 onMounted(async () => {
-  const res = await fetch("/api/lecturer/analyticss");
+  const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/analyticss`, {
+          credentials: "include",
+        })
   const data = await res.json();
 
   summary.value = data.summary;

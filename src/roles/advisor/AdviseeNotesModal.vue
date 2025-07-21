@@ -107,8 +107,9 @@ async function loadCourses() {
     return;
   }
   const res = await fetch(
-    `/api/advisor/student-courses?student_id=${encodeURIComponent(props.student.student_id)}`,
-  );
+    `${process.env.VUE_APP_API_URL}/api/advisor/student-courses?student_id=${encodeURIComponent(props.student.student_id)}`, {
+          credentials: "include",
+        })
   if (res.ok) {
     courses.value = await res.json();
     if (courses.value.length > 0) {
@@ -131,8 +132,9 @@ async function loadNotes() {
       return;
     }
     const res = await fetch(
-      `/api/advisor/notes?student_id=${encodeURIComponent(props.student.student_id)}`,
-    );
+      `${process.env.VUE_APP_API_URL}/api/advisor/notes?student_id=${encodeURIComponent(props.student.student_id)}`, {
+          credentials: "include",
+        })
     if (res.ok) {
       notes.value = await res.json();
     } else {
@@ -163,7 +165,7 @@ async function saveNote() {
       meeting_date: meetingDate.value,
     };
     const res = await fetch(
-      `/api/advisor/notes-by-matric/${encodeURIComponent(matric_number)}/${encodeURIComponent(course_id)}`,
+      `${process.env.VUE_APP_API_URL}/api/advisor/notes-by-matric/${encodeURIComponent(matric_number)}/${encodeURIComponent(course_id)}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -194,7 +196,7 @@ async function deleteNote(noteId) {
   error.value = "";
   message.value = "";
   try {
-    const res = await fetch(`/api/advisor/notes/${noteId}`, {
+    const res = await fetch(`${process.env.VUE_APP_API_URL}/api/advisor/notes/${noteId}`, {
       method: "DELETE",
       credentials: "include",
     });

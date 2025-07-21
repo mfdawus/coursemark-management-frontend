@@ -246,7 +246,9 @@ function resetFilters() {
 // Fetch data on mount
 onMounted(async () => {
   try {
-   const response = await fetch('/api/advisor/adviseereport')
+   const response = await fetch(`${process.env.VUE_APP_API_URL}/api/advisor/adviseereport`, {
+          credentials: "include",
+        })
     if (!response.ok) {
       throw new Error(`HTTP error ${response.status}`)
     }

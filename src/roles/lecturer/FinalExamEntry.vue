@@ -163,8 +163,9 @@ onMounted(async () => {
   try {
     const { course_id, student_id } = route.params;
     const res = await fetch(
-      `/api/lecturer/final-exams/${course_id}/${student_id}`,
-    );
+      `${process.env.VUE_APP_API_URL}/api/lecturer/final-exams/${course_id}/${student_id}`, {
+          credentials: "include",
+        })
     const data = await res.json();
 
     finalMark.value = data.final_mark ?? 0;
@@ -188,7 +189,7 @@ async function saveFinalMark() {
   }
 
   const { course_id, student_id } = route.params;
-  await fetch("/api/lecturer/final-exams", {
+  await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/final-exams`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -196,6 +197,7 @@ async function saveFinalMark() {
       student_id,
       final_mark: finalMark.value,
     }),
+    credentials: "include",
   });
   alert("Saved!");
   router.push("/lecturer/final-exams");
@@ -203,8 +205,9 @@ async function saveFinalMark() {
 
 async function deleteFinalMark() {
   const { course_id, student_id } = route.params;
-  await fetch(`/api/lecturer/final-exams/${course_id}/${student_id}`, {
+  await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/final-exams/${course_id}/${student_id}`, {
     method: "DELETE",
+    credentials: "include",
   });
   alert("Deleted!");
   router.push("/lecturer/final-exams");

@@ -121,7 +121,9 @@ onMounted(async () => {
 
 async function loadAssessments() {
   try {
-    const res = await fetch(`/api/lecturer/assessments/${courseId}`);
+    const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/assessments/${courseId}`, {
+          credentials: "include",
+        })
     if (res.ok) {
       assessments.value = await res.json();
     }
@@ -133,8 +135,9 @@ async function loadAssessments() {
 async function loadExistingRemark() {
   try {
     const res = await fetch(
-      `/api/lecturer/remark-requests/${courseId}/${studentId}`,
-    );
+      `${process.env.VUE_APP_API_URL}/api/lecturer/remark-requests/${courseId}/${studentId}`, {
+          credentials: "include",
+        })
     if (res.ok) {
       const data = await res.json();
       if (data && Object.keys(data).length) {
@@ -151,11 +154,12 @@ async function saveRemark() {
   loading.value = true;
   try {
     const res = await fetch(
-      `/api/lecturer/remark-requests/${courseId}/${studentId}`,
+      `${process.env.VUE_APP_API_URL}/api/lecturer/remark-requests/${courseId}/${studentId}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(remark.value),
+        credentials: "include",
       },
     );
     const data = await res.json();

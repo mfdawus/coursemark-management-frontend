@@ -22,7 +22,7 @@ function isActive(path) {
 // Logout function
 function logout() {
   localStorage.clear();
-  fetch("/api/logout", { method: "POST" }); // Optional
+  fetch(`${process.env.VUE_APP_API_URL}/api/logout`, { method: "POST" }); // Optional
   router.push("/login");
 }
 </script>

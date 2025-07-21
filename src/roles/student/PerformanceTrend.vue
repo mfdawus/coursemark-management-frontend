@@ -41,16 +41,20 @@ export default {
   },
   methods: {
     fetchTrendData() {
-      fetch("/api/student/performance-trend")
-        .then((res) => res.json())
+        fetch(`${process.env.VUE_APP_API_URL}/api/student/performance-trend`, {
+          credentials: "include",
+        })
+        .then((res) => {
+          if (!res.ok) throw new Error("Unauthorized or failed request");
+          return res.json();
+        })
         .then((data) => {
           if (!data || data.length === 0) return;
 
-          // Sort by date (just in case)
           data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
           this.chartData.labels = data.map(
-            (d) => `${d.course_code}: ${d.assessment_title}`,
+            (d) => `${d.course_code}`
           );
 
           this.chartData.datasets = [

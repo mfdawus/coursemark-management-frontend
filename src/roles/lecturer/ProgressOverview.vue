@@ -112,7 +112,9 @@ const totalRemarks = computed(() => {
 });
 
 onMounted(async () => {
-  const res = await axios.get("/api/lecturer/progress");
+  const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/lecturer/progress`, {
+  withCredentials: true,
+});
   progressData.value = res.data;
 });
 </script>

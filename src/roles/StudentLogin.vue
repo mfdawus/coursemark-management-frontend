@@ -64,7 +64,7 @@ async function confirmLogin() {
   }
 
   try {
-    const response = await fetch("/api/login", {
+    const response = await fetch(`${process.env.VUE_APP_API_URL}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -87,8 +87,17 @@ async function confirmLogin() {
         })
       );
 
+      sessionStorage.setItem(
+        "user",
+        JSON.stringify({
+          matric: result.matric,
+          name: result.name,
+          role: result.role,
+        })
+      );
+
       pinModalInstance.hide(); // Hide modal on success
-      router.push("/student");
+      router.push("/student/dashboard");
     } else {
       error.value = result.message || "Login failed.";
     }

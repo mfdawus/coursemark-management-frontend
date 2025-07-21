@@ -163,15 +163,19 @@ onMounted(async () => {
 });
 
 async function fetchCourses() {
-  const res = await fetch("/api/lecturer/courses");
+  const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/courses`, {
+          credentials: "include",
+        })
   courses.value = await res.json();
 }
 
 async function fetchAssessments() {
   const url = selectedCourse.value
-    ? `/api/lecturer/assessments/${selectedCourse.value}`
-    : "/api/lecturer/assessments";
-  const res = await fetch(url);
+    ? `${process.env.VUE_APP_API_URL}/api/lecturer/assessments/${selectedCourse.value}`
+    : `${process.env.VUE_APP_API_URL}/api/lecturer/assessments`;
+  const res = await fetch(url, {
+          credentials: "include",
+        })
   assessments.value = await res.json();
 }
 
@@ -194,12 +198,13 @@ async function saveAssessment() {
   try {
     const method = editingId.value ? "PUT" : "POST";
     const url = editingId.value
-      ? `/api/lecturer/assessments/${editingId.value}`
-      : "/api/lecturer/assessments";
+      ? `${process.env.VUE_APP_API_URL}/api/lecturer/assessments/${editingId.value}`
+      : `${process.env.VUE_APP_API_URL}/api/lecturer/assessments`;
     const res = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form.value, created_by: 13 }),
+      credentials: "include",
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || "Failed");
@@ -217,7 +222,7 @@ function editAssessment(assess) {
 
 async function deleteAssessment(id) {
   if (!confirm("Are you sure?")) return;
-  await fetch(`/api/lecturer/assessments/${id}`, { method: "DELETE" });
+  await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/assessments/${id}`, { method: "DELETE",credentials: "include" });
   await fetchAssessments();
 }
 

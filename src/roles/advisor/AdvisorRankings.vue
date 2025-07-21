@@ -162,7 +162,9 @@ export default {
   },
   methods: {
     fetchRankings() {
-      fetch("/api/advisor/rankings")
+      fetch(`${process.env.VUE_APP_API_URL}/api/advisor/rankings`, {
+          credentials: "include",
+        })
         .then((res) => res.json())
         .then((data) => {
           this.rankings = data;

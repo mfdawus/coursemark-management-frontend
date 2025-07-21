@@ -101,7 +101,9 @@ const assessments = ref([]);
 
 async function fetchCourses() {
   try {
-    const res = await fetch("/api/lecturer/courses");
+    const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/courses`, {
+          credentials: "include",
+        })
     if (!res.ok) throw new Error("Failed to fetch courses");
     courses.value = await res.json();
   } catch (err) {
@@ -114,8 +116,9 @@ async function fetchAssignments() {
   if (!selectedCourse.value) return;
   try {
     const res = await fetch(
-      `/api/lecturer/course-assignment/${selectedCourse.value}`,
-    );
+      `${process.env.VUE_APP_API_URL}/api/lecturer/course-assignment/${selectedCourse.value}`, {
+          credentials: "include",
+        })
     if (!res.ok) throw new Error("Failed to fetch assignments");
     const data = await res.json();
     students.value = data;
@@ -140,20 +143,22 @@ async function toggleAssignment(studentId, ass) {
   try {
     if (ass.assigned) {
       await fetch(
-        `/api/lecturer/assign-mark/${ass.assessment_id}/${studentId}`,
+        `${process.env.VUE_APP_API_URL}/api/lecturer/assign-mark/${ass.assessment_id}/${studentId}`,
         {
           method: "DELETE",
+          credentials: "include",
         },
       );
       ass.assigned = false;
     } else {
-      await fetch("/api/lecturer/assign-mark", {
+      await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/assign-mark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           assessment_id: ass.assessment_id,
           student_id: studentId,
         }),
+        credentials: "include",
       });
       ass.assigned = true;
     }

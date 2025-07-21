@@ -130,7 +130,9 @@ const studentNotes = ref({}); // { [student_id]: [notes] }
 
 onMounted(async () => {
   try {
-    const response = await fetch("/api/advisor/adviseelist");
+    const response = await fetch(`${process.env.VUE_APP_API_URL}/api/advisor/adviseelist`, {
+          credentials: "include",
+        })
     if (!response.ok) throw new Error("Failed to fetch advisees");
     students.value = await response.json();
   } catch (err) {

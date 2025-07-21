@@ -60,7 +60,9 @@ const router = useRouter();
 
 onMounted(async () => {
   try {
-    const res = await fetch("/api/lecturer/enrolled-students");
+    const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/enrolled-students`, {
+          credentials: "include",
+        })
     if (!res.ok) throw new Error("Failed to fetch enrollments");
     enrollments.value = await res.json();
   } catch (err) {

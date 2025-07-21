@@ -65,7 +65,7 @@ import ArgonButton from "@/components/ArgonButton.vue";
                     <td>{{ student.email }}</td>
                     <td>{{ student.matric_number }}</td>
                     <td>
-                      <span class="badge bg-gradient-info text-white text-sm">{{ student.role }}</span>
+                      <span class="badge bg-gradient-info text-white fs-7">{{ student.role }}</span>
                     </td>
                     <td>{{ student.program }}</td>
                     <td>{{ formatDate(student.created_at) }}</td>
@@ -73,7 +73,6 @@ import ArgonButton from "@/components/ArgonButton.vue";
                     <td>
                       <button class="btn btn-sm btn-success me-1" @click="openEditModal(student)">Details</button>
                       <button class="btn btn-sm btn-warning me-1" @click="openPasswordModal(student)">Password</button>
-                      <button class="btn btn-sm btn-info" @click="openRoleModal(student)">Role</button>
                     </td>
                   </tr>
                   <tr v-if="filteredStudents.length === 0">
@@ -129,22 +128,6 @@ import ArgonButton from "@/components/ArgonButton.vue";
       </div>
     </div>
 
-    <!-- Role Modal -->
-    <div v-if="showRoleModal" class="modal-backdrop">
-      <div class="modal-box card p-4">
-        <h5 class="mb-3">Change Role</h5>
-        <select v-model="roleForm.role" class="form-select mb-3">
-          <option value="student">Student</option>
-          <option value="lecturer">Lecturer</option>
-          <option value="admin">Admin</option>
-          <option value="advisor">Advisor</option>
-        </select>
-        <div class="text-end">
-          <argon-button color="secondary" class="me-2" @click="closeModals">Cancel</argon-button>
-          <argon-button color="info" @click="updateUserRole">Update</argon-button>
-        </div>
-      </div>
-    </div>
 
     <!-- Add User Modal -->
     <div v-if="showAddModal" class="modal-backdrop">
@@ -192,7 +175,6 @@ export default {
       selectedStudents: [],
       showEditModal: false,
       showPasswordModal: false,
-      showRoleModal: false,
       editForm: {id: null,name: "", email: "", matric: "", program: "",pin:"", role: "student"},
       passwordForm: { id: null, password: "" },
       roleForm: { id: null, role: "" },
@@ -204,21 +186,24 @@ export default {
   computed: {
     filteredStudents() {
       const q = this.searchQuery.toLowerCase();
-      return this.students.filter(
-        (s) =>
-          s.name.toLowerCase().includes(q) ||
-          s.email.toLowerCase().includes(q) ||
-          s.matric_number.toLowerCase().includes(q) ||
-          s.program.toLowerCase().includes(q),
+
+      return this.students.filter((s) =>
+        (s.name || '').toLowerCase().includes(q) ||
+        (s.email || '').toLowerCase().includes(q) ||
+        (s.matric_number || '').toLowerCase().includes(q) ||
+        (s.program || '').toLowerCase().includes(q)
       );
     },
   },
+
   mounted() {
     this.fetchStudents();
   },
   methods: {
     fetchStudents() {
-      fetch("/api/admin/users")
+      fetch(`${process.env.VUE_APP_API_URL}/api/admin/users`, {
+          credentials: "include",
+        })
         .then((res) => res.json())
         .then((data) => {
           this.students = data.students || [];
@@ -261,16 +246,11 @@ export default {
       this.passwordForm = { id: student.id, password: "" };
       this.showPasswordModal = true;
     },
-    openRoleModal(student) {
-      this.roleForm = { id: student.id, role: student.role };
-      this.showRoleModal = true;
-    },
 
     // Close all modals
     closeModals() {
       this.showEditModal = false;
       this.showPasswordModal = false;
-      this.showRoleModal = false;
       this.showAddModal = false;
     },
 
@@ -284,10 +264,11 @@ export default {
         form.pin = null;
       }
 
-      fetch(`/api/admin/users/${form.id}/details`, {
+      fetch(`${process.env.VUE_APP_API_URL}/api/admin/users/${form.id}/details`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
+        credentials: "include",
       })
         .then((res) => res.json())
         .then((data) => {
@@ -303,10 +284,11 @@ export default {
 
     // Update password
     updatePassword() {
-      fetch(`/api/admin/users/${this.passwordForm.id}/password`, {
+      fetch(`${process.env.VUE_APP_API_URL}/api/admin/users/${this.passwordForm.id}/password`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: this.passwordForm.password }),
+        credentials: "include",
       })
         .then((res) => res.json())
         .then((data) => {
@@ -321,10 +303,11 @@ export default {
 
     // Change user role
     updateUserRole() {
-      fetch(`/api/admin/users/${this.roleForm.id}/role`, {
+      fetch(`${process.env.VUE_APP_API_URL}/api/admin/users/${this.roleForm.id}/role`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: this.roleForm.role }),
+        credentials: "include",
       })
         .then((res) => res.json())
         .then((data) => {
@@ -360,10 +343,11 @@ export default {
         form.pin = null;
       }
 
-      fetch("/api/admin/users", {
+      fetch(`${process.env.VUE_APP_API_URL}/api/admin/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
+        credentials: "include",
       })
         .then((res) => res.json())
         .then((data) => {

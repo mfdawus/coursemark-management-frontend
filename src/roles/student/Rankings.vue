@@ -70,7 +70,9 @@ export default {
   },
   methods: {
     fetchRankings() {
-      fetch("/api/student/rankings")
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/rankings`, {
+          credentials: "include",
+        })
         .then((res) => res.json())
         .then((data) => {
           this.rankings = data;
@@ -81,7 +83,9 @@ export default {
         });
     },
     fetchStudentInfo() {
-      fetch("/api/session") // optional: create /api/session to return { name: 'Student A' }
+      fetch(`${process.env.VUE_APP_API_URL}/api/session`, {
+          credentials: "include",
+        }) // optional: create /api/session to return { name: 'Student A' }
         .then((res) => res.json())
         .then((data) => {
           this.currentStudentName = data.name;

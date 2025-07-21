@@ -107,7 +107,9 @@ export default {
   },
   methods: {
     fetchAssessments() {
-      fetch("/api/student/mymarks")
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/mymarks`, {
+          credentials: "include",
+        })
         .then((res) => res.json())
         .then((data) => {
           if (Array.isArray(data)) {
@@ -137,10 +139,11 @@ export default {
         });
     },
     simulate() {
-      fetch("/api/student/whatif", {
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/whatif`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ assessments: this.simAssessments }),
+        credentials: "include",
       })
         .then((res) => res.json())
         .then((data) => {

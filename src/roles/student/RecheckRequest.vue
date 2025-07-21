@@ -40,12 +40,12 @@
     <h4 class="fw-semibold text-dark mb-3">Your Requests</h4>
 
     <div v-if="requests.length > 0" class="table-responsive">
-      <table class="table table-bordered align-middle text-center table-hover">
+      <table class="table table-bordered table-striped align-middle text-center table-hover">
         <thead class="table-light border">
           <tr>
-            <th>Course</th>
+            <th class="text-start">Course</th>
             <th>Assessment</th>
-            <th>Message</th>
+            <th class="text-start">Message</th>
             <th>Status</th>
             <th>Requested At</th>
           </tr>
@@ -53,17 +53,21 @@
         <tbody>
           <tr v-for="req in requests" :key="req.id">
             <td class="text-start">
-              {{ req.course_code }} - {{ req.course_name }}
+              <strong>{{ req.course_code }}</strong><br>
+              <span class="text-muted">{{ req.course_name }}</span>
             </td>
-            <td>{{ req.assessment_title }} ({{ req.assessment_type }})</td>
+            <td>
+              {{ req.assessment_title }}<br>
+              <small class="text-muted">({{ req.assessment_type }})</small>
+            </td>
             <td class="text-start">{{ req.message }}</td>
             <td>
               <span
-                class="badge"
+                class="badge text-dark rounded-pill px-3 py-2"
                 :class="{
-                  'bg-warning': req.status === 'Pending',
-                  'bg-success': req.status === 'Approved',
-                  'bg-danger': req.status === 'Rejected'
+                  'bg-warning text-dark': req.status === 'Pending',
+                  'bg-success text-dark': req.status === 'Approved',
+                  'bg-danger text-dark': req.status === 'Rejected'
                 }"
               >
                 {{ req.status }}
@@ -99,14 +103,18 @@ export default {
   },
   methods: {
     fetchAssessments() {
-      fetch("/api/student/assessments") // must create this if not available
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/assessments`, {
+          credentials: "include",
+        }) // must create this if not available
         .then((res) => res.json())
         .then((data) => {
           this.assessments = data;
         });
     },
     fetchRequests() {
-      fetch("/api/student/remark-requests")
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/remark-requests`, {
+          credentials: "include",
+        })
         .then((res) => res.json())
         .then((data) => {
           this.requests = data || [];
@@ -118,10 +126,11 @@ export default {
         return;
       }
 
-      fetch("/api/student/remark-request", {
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/remark-request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(this.newRequest),
+        credentials: "include",
       })
         .then((res) => {
           if (!res.ok) return res.json().then((err) => Promise.reject(err));
@@ -151,55 +160,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.recheck-page {
-  padding: 1.5rem;
-}
-.form-section {
-  margin-bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-textarea {
-  resize: vertical;
-}
-button {
-  align-self: start;
-  padding: 0.5rem 1rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-table.request-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-table th,
-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
-}
-.badge {
-  padding: 2px 6px;
-  border-radius: 4px;
-  text-transform: capitalize;
-}
-.badge.pending {
-  background-color: #fffae6;
-  color: #b58900;
-}
-.badge.approved {
-  background-color: #d4edda;
-  color: #155724;
-}
-.badge.rejected {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-.badge.reviewed {
-  background-color: #d1ecf1;
-  color: #0c5460;
-}
-</style>

@@ -58,7 +58,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await fetch("/api/lecturer/analytics", {
+      const response = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/analytics`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

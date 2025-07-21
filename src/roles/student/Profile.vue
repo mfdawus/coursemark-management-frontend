@@ -79,7 +79,9 @@ export default {
   },
   methods: {
     fetchProfile() {
-      fetch("/api/student/profile")
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/profile`, {
+          credentials: "include",
+        })
         .then((res) => res.json())
         .then((data) => {
           this.profile = data;

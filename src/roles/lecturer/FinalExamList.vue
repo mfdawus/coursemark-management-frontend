@@ -79,7 +79,9 @@ const students = ref([]);
 const router = useRouter();
 
 async function fetchStudents() {
-  const res = await fetch("/api/lecturer/final-exams");
+  const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/final-exams`, {
+          credentials: "include",
+        })
   students.value = await res.json();
 }
 

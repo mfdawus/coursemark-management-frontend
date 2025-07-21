@@ -187,7 +187,10 @@ const summaryCards = computed(() => [
 // Fetch functions
 const fetchDashboard = async () => {
   try {
-    const res = await axios.get("/api/student/dashboard");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/student/dashboard`, {
+      withCredentials: true,
+    });
+
     dashboard.value = res.data;
   } catch (err) {
     console.error("Failed to load dashboard data:", err);
@@ -197,7 +200,9 @@ const fetchDashboard = async () => {
 
 const fetchProgressData = async () => {
   try {
-    const res = await axios.get("/api/student/progress");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/student/progress`, {
+      withCredentials: true,
+    });
     progressData.value = res.data;
   } catch (err) {
     console.error("Failed to load progress data:", err);

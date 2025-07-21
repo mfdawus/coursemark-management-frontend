@@ -26,7 +26,9 @@ const courses = ref([]);
 const loaded = ref(false);
 
 onMounted(async () => {
-  const res = await fetch("/api/courses"); // adjust API if needed
+  const res = await fetch(`${process.env.VUE_APP_API_URL}/api/courses`, {
+          credentials: "include",
+        }) // adjust API if needed
   courses.value = await res.json();
   loaded.value = true;
 });

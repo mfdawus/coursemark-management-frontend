@@ -3,13 +3,6 @@
     <!-- Header -->
     <div class="mb-4">
       <h2 class="text-dark font-weight-bolder">Welcome Back, Advisor!</h2>
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search student or course..."
-        class="form-control mt-2"
-        style="max-width: 300px"
-      />
     </div>
 
     <!-- Metrics Cards -->
@@ -63,7 +56,7 @@
     <div class="mb-4">
       <mini-statistics-card
         title="Avg. CGPA"
-        :value="metrics.avg_cgpa.toFixed(2)"
+        :value="isNaN(Number(metrics.avg_cgpa)) ? 'N/A' : Number(metrics.avg_cgpa).toFixed(2)"
         :icon="{
           component: 'ni ni-chart-bar-32',
           background: 'bg-gradient-primary',
@@ -212,7 +205,10 @@ const openCourseStudents = async (course) => {
   studentsError.value = "";
   loadingStudents.value = true;
   try {
-    const res = await axios.get(`/api/advisor/courses/${course.id}/students`);
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/advisor/courses/${course.id}/students`, {
+      withCredentials: true,
+    });
+
     studentsInCourse.value = res.data;
   } catch (e) {
     studentsError.value = "Failed to load students.";
@@ -227,7 +223,6 @@ const closeModal = () => {
   studentsError.value = "";
 };
 
-const searchQuery = ref("");
 const mentorSection = ref(null);
 
 const scrollToMentors = () => {
@@ -250,7 +245,9 @@ const atRiskStudents = ref([]);
 
 onMounted(async () => {
   try {
-    const res = await axios.get("/api/advisor/dashboard");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/advisor/dashboard`, {
+      withCredentials: true,
+    });
     if (res.data) {
       metrics.value = res.data;
     }
@@ -259,7 +256,9 @@ onMounted(async () => {
   }
 
   try {
-    const res = await axios.get("/api/advisor/courses");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/advisor/courses`, {
+      withCredentials: true,
+    });
     if (res.data) {
       courses.value = res.data;
     }
@@ -268,7 +267,9 @@ onMounted(async () => {
   }
 
   try {
-    const res = await axios.get("/api/advisor/students-by-course");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/advisor/students-by-course`, {
+      withCredentials: true,
+    });
     if (res.data) {
       studentsByCourse.value = res.data;
     }
@@ -277,7 +278,9 @@ onMounted(async () => {
   }
 
   try {
-    const res = await axios.get("/api/advisor/cgpa-distribution");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/advisor/cgpa-distribution`, {
+      withCredentials: true,
+    });
     if (res.data) {
       cgpaDistribution.value = res.data;
     }
@@ -286,7 +289,9 @@ onMounted(async () => {
   }
 
   try {
-    const res = await axios.get("/api/advisor/avg-cgpa-by-course");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/advisor/avg-cgpa-by-course`, {
+      withCredentials: true,
+    });
     if (res.data) {
       avgCgpaByCourse.value = res.data;
     }
@@ -295,13 +300,17 @@ onMounted(async () => {
   }
 
   try {
-    const res = await axios.get("/api/advisor/top-10-students");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/advisor/top-10-students`, {
+      withCredentials: true,
+    });
     if (res.data) {
       top10Students.value = res.data;
     }
   } catch (e) { /* ignore error */ }
   try {
-    const res = await axios.get("/api/advisor/at-risk-students");
+    const res = await axios.get(`${process.env.VUE_APP_API_URL}/api/advisor/at-risk-students`, {
+      withCredentials: true,
+    });
     if (res.data) {
       atRiskStudents.value = res.data;
     }

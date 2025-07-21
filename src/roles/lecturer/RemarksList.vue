@@ -72,7 +72,9 @@ import { ref, onMounted } from "vue";
 const students = ref([]);
 
 onMounted(async () => {
-  const res = await fetch("/api/lecturer/students-remarks");
+  const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/students-remarks`, {
+          credentials: "include",
+        })
   const data = await res.json();
   console.log("Loaded data:", data);
   students.value = data;

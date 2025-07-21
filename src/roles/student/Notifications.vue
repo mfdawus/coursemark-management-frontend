@@ -42,7 +42,9 @@ export default {
   },
   methods: {
     fetchNotifications() {
-      fetch("/api/student/notifications")
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/notifications`, {
+          credentials: "include",
+        })
         .then((res) => res.json())
         .then((data) => {
           this.notifications = data || [];

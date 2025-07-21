@@ -264,14 +264,17 @@ export default {
       ].join(" ");
     },
     async fetchCourses() {
-      const res = await fetch("/api/lecturer/courses");
+      const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/courses`, {
+          credentials: "include",
+        })
       this.courses = await res.json();
     },
     async addCourse() {
-      await fetch("/api/lecturer/courses", {
+      await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/courses`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(this.courseForm),
+        credentials: "include",
       });
       this.fetchCourses();
       this.resetForm();
@@ -287,17 +290,18 @@ export default {
       };
     },
     async updateCourse() {
-      await fetch(`/api/lecturer/courses/${this.editingId}`, {
+      await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/courses/${this.editingId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(this.courseForm),
+        credentials: "include",
       });
       this.fetchCourses();
       this.resetForm();
     },
     async deleteCourse(id) {
       if (!confirm("Are you sure you want to delete this course?")) return;
-      await fetch(`/api/lecturer/courses/${id}`, { method: "DELETE" });
+      await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/courses/${id}`, { method: "DELETE",credentials: "include", });
       this.fetchCourses();
     },
     resetForm() {
@@ -311,23 +315,28 @@ export default {
       this.editingId = null;
     },
     async fetchStudents() {
-      const res = await fetch("/api/lecturer/analytics");
+      const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/analytics`, {
+          credentials: "include",
+        })
       const data = await res.json();
       this.students = data.students;
     },
     async fetchEnrollments() {
-      const res = await fetch("/api/lecturer/enrollments");
+      const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/enrollments`, {
+          credentials: "include",
+        })
       this.enrollments = await res.json();
     },
     async enrollStudent() {
       const url = this.editingEnrollmentId
-        ? `/api/lecturer/enroll/${this.editingEnrollmentId}`
-        : "/api/lecturer/enroll";
+        ? `${process.env.VUE_APP_API_URL}/api/lecturer/enroll/${this.editingEnrollmentId}`
+        : `${process.env.VUE_APP_API_URL}/api/lecturer/enroll`;
       const method = this.editingEnrollmentId ? "PUT" : "POST";
       await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(this.enrollForm),
+        credentials: "include",
       });
       this.fetchEnrollments();
       this.resetEnrollForm();
@@ -338,7 +347,7 @@ export default {
       this.enrollForm.course_id = enroll.course_id;
     },
     async deleteEnrollment(id) {
-      await fetch(`/api/lecturer/enroll/${id}`, { method: "DELETE" });
+      await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/enroll/${id}`, { method: "DELETE",credentials: "include", });
       this.fetchEnrollments();
     },
     resetEnrollForm() {

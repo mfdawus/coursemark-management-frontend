@@ -92,8 +92,9 @@ const error = ref(null);
 onMounted(async () => {
   try {
     const res = await fetch(
-      `/api/lecturer/marks?course_id=${courseId}&student_id=${studentId}`,
-    );
+      `${process.env.VUE_APP_API_URL}/api/lecturer/marks?course_id=${courseId}&student_id=${studentId}`, {
+          credentials: "include",
+        })
     if (!res.ok) throw new Error("Failed to load data");
     data.value = await res.json();
   } catch (err) {
@@ -105,7 +106,7 @@ onMounted(async () => {
 
 async function saveMark(mark) {
   try {
-    const res = await fetch("/api/lecturer/marks", {
+    const res = await fetch(`${process.env.VUE_APP_API_URL}/api/lecturer/marks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -113,6 +114,7 @@ async function saveMark(mark) {
         student_id: studentId,
         mark_obtained: mark.mark_obtained,
       }),
+      credentials: "include",
     });
     if (!res.ok) throw new Error("Failed to save mark");
     alert("Mark saved!");

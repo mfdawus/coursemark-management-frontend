@@ -95,7 +95,9 @@ export default {
   },
   methods: {
     fetchMyMarks() {
-      fetch("/api/student/mymarks")
+      fetch(`${process.env.VUE_APP_API_URL}/api/student/mymarks`, {
+          credentials: "include",
+        })
         .then((res) => res.json())
         .then((data) => {
           this.marksByCourse = data;

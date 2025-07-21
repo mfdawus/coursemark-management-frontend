@@ -42,7 +42,7 @@ async function submit() {
   }
 
   try {
-    const response = await fetch("/api/login/staff", {
+    const response = await fetch(`${process.env.VUE_APP_API_URL}/api/login/staff`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -62,7 +62,23 @@ async function submit() {
           role: result.role,
         })
       );
-      router.push(`/${result.role}`);
+
+      sessionStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: result.name,
+          role: result.role,
+        })
+      );
+      
+    if (result.role === 'advisor') {
+      router.push('/advisor/dashboard');
+    } else if (result.role === 'lecturer') {
+      router.push('/lecturer/courses');
+    } else if (result.role === 'admin') {
+      router.push('/admin/users');
+    } 
+
     } else {
       error.value = result.message || "Login failed.";
     }
@@ -102,7 +118,7 @@ async function submit() {
                     <span class="fs-5 text-dark">Course Management</span>
                   </h2>
 
-                  <h4 class="font-weight-bolder">Student Login</h4>
+                  <h4 class="font-weight-bolder">Staff Login</h4>
                   <p class="mb-0">Enter your details to sign in</p>
                 </div>
                 <div class="card-body">
